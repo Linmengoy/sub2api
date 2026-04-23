@@ -1785,6 +1785,9 @@ export default {
         openai: 'OpenAI',
         gemini: 'Gemini',
         antigravity: 'Antigravity',
+        bigmodel: '智谱',
+        minimax: 'MiniMax',
+        kimi: 'Kimi',
       },
       deleteConfirm:
         "Are you sure you want to delete '{name}'? All associated API keys will no longer belong to any group.",
@@ -2218,6 +2221,9 @@ export default {
         openai: 'OpenAI',
         gemini: 'Gemini',
         antigravity: 'Antigravity',
+        bigmodel: '智谱',
+        minimax: 'MiniMax',
+        kimi: 'Kimi',
       },
       types: {
         oauth: 'OAuth',
@@ -2462,6 +2468,8 @@ export default {
       setupTokenLongLived: 'Setup Token (Long-lived)',
       baseUrl: 'Base URL',
       baseUrlHint: 'Leave default for official Anthropic API',
+      apiKeyOnlyNote: 'This platform only supports API Key authentication. The base URL is fixed and cannot be changed.',
+      fixedBaseUrlHint: 'Base URL is pre-configured and cannot be modified.',
       apiKeyRequired: 'API Key *',
       apiKeyPlaceholder: 'sk-ant-api03-...',
       apiKeyHint: 'Your Claude Console API Key',
