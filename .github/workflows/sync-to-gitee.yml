@@ -1,0 +1,29 @@
+name: Sync GitHub to Gitee
+
+# 触发条件：push到main/master就同步
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync to Gitee
+        run: |
+          # --------------- 只改下面4行 ---------------
+          GITHUB_REPO="Linmengoy/sub2api"  # 如: alice/my-project
+          GITEE_REPO="linmeng001/sub2api"    # 如: alice/my-project
+          GITEE_USER="${{ secrets.GITEE_USERNAME }}"
+          GITEE_TOKEN="${{ secrets.GITEE_TOKEN }}"
+          # -----------------------------------------
+
+          # 自动拼接地址
+          git remote add gitee https://${GITEE_USER}:${GITEE_TOKEN}@gitee.com/${GITEE_REPO}.git
+          git push gitee --all --force
+          git push gitee --tags --force
