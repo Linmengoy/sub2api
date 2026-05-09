@@ -136,3 +136,5 @@ docs/*
 frontend/coverage/
 aicodex
 output/
+build-mac.sh
+build-win.bat

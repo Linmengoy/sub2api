@@ -691,8 +691,9 @@ func (s *SubscriptionService) CheckAndActivateWindow(ctx context.Context, sub *U
 		return nil
 	}
 
-	// 使用当天零点作为窗口起始时间
-	windowStart := startOfDay(time.Now())
+	// 修改为使用用户订阅时间为刷新起点
+	// windowStart := startOfDay(time.Now())
+	windowStart := sub.StartsAt
 	return s.userSubRepo.ActivateWindows(ctx, sub.ID, windowStart)
 }
 
@@ -706,7 +707,8 @@ func (s *SubscriptionService) AdminResetQuota(ctx context.Context, subscriptionI
 	if err != nil {
 		return nil, err
 	}
-	windowStart := startOfDay(time.Now())
+	windowStart := sub.StartsAt
+	// startOfDay(time.Now())
 	if resetDaily {
 		if err := s.userSubRepo.ResetDailyUsage(ctx, sub.ID, windowStart); err != nil {
 			return nil, err
