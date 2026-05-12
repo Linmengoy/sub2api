@@ -5021,6 +5021,102 @@
             </div>
           </div>
         </div>
+        <!-- SaleRebate (销售返利) feature card -->
+        <div class="card">
+          <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+              {{ t('admin.settings.features.packageRedeemSaleRebate.title') }}
+            </h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {{ t('admin.settings.features.packageRedeemSaleRebate.description') }}
+            </p>
+          </div>
+          <div class="space-y-5 p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.enabled') }}
+                </label>
+                <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.enabledHint') }}
+                </p>
+              </div>
+              <Toggle v-model="form.package_redeem_sale_rebate_enabled" />
+            </div>
+
+            <div v-if="form.package_redeem_sale_rebate_enabled" class="space-y-6">
+              <div>
+                <label class="input-label">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.defaultRatePercent') }}
+                </label>
+                <div class="relative">
+                  <input
+                    v-model.number="form.package_redeem_sale_rebate_default_rate_percent"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    class="input pr-8"
+                    placeholder="20"
+                  />
+                  <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span>
+                </div>
+                <p class="mt-1 text-xs text-gray-400">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.defaultRatePercentHint') }}
+                </p>
+              </div>
+
+              <div>
+                <label class="input-label">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.freezeHours') }}
+                </label>
+                <input
+                  v-model.number="form.package_redeem_sale_rebate_freeze_hours"
+                  type="number"
+                  step="1"
+                  min="0"
+                  max="720"
+                  class="input"
+                />
+                <p class="mt-1 text-xs text-gray-400">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.freezeHoursDesc') }}
+                </p>
+              </div>
+
+              <div>
+                <label class="input-label">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.perRedeemerCap') }}
+                </label>
+                <input
+                  v-model.number="form.package_redeem_sale_rebate_per_redeemer_cap"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="input"
+                />
+                <p class="mt-1 text-xs text-gray-400">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.perRedeemerCapDesc') }}
+                </p>
+              </div>
+
+              <div>
+                <label class="input-label">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.perOrderCap') }}
+                </label>
+                <input
+                  v-model.number="form.package_redeem_sale_rebate_per_order_cap"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="input"
+                />
+                <p class="mt-1 text-xs text-gray-400">
+                  {{ t('admin.settings.features.packageRedeemSaleRebate.perOrderCapDesc') }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Affiliate add/edit modal -->
         <div
@@ -6449,6 +6545,11 @@ const form = reactive<SettingsForm>({
   affiliate_rebate_freeze_hours: 0,
   affiliate_rebate_duration_days: 0,
   affiliate_rebate_per_invitee_cap: 0,
+  package_redeem_sale_rebate_enabled: false,
+  package_redeem_sale_rebate_default_rate_percent: 20,
+  package_redeem_sale_rebate_freeze_hours: 0,
+  package_redeem_sale_rebate_per_redeemer_cap: 0,
+  package_redeem_sale_rebate_per_order_cap: 0,
   default_concurrency: 1,
   default_subscriptions: [],
   force_email_on_third_party_signup: false,
@@ -7560,6 +7661,14 @@ async function saveSettings() {
       affiliate_rebate_freeze_hours: Math.max(0, Math.min(720, Number(form.affiliate_rebate_freeze_hours) || 0)),
       affiliate_rebate_duration_days: Math.max(0, Math.min(3650, Math.floor(Number(form.affiliate_rebate_duration_days) || 0))),
       affiliate_rebate_per_invitee_cap: Math.max(0, Number(form.affiliate_rebate_per_invitee_cap) || 0),
+      package_redeem_sale_rebate_enabled: form.package_redeem_sale_rebate_enabled,
+      package_redeem_sale_rebate_default_rate_percent: Math.min(
+        100,
+        Math.max(0, Number(form.package_redeem_sale_rebate_default_rate_percent) || 0),
+      ),
+      package_redeem_sale_rebate_freeze_hours: Math.max(0, Math.min(720, Math.floor(Number(form.package_redeem_sale_rebate_freeze_hours) || 0))),
+      package_redeem_sale_rebate_per_redeemer_cap: Math.max(0, Number(form.package_redeem_sale_rebate_per_redeemer_cap) || 0),
+      package_redeem_sale_rebate_per_order_cap: Math.max(0, Number(form.package_redeem_sale_rebate_per_order_cap) || 0),
       default_concurrency: form.default_concurrency,
       default_subscriptions: normalizedDefaultSubscriptions,
       force_email_on_third_party_signup: form.force_email_on_third_party_signup,

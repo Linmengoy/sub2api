@@ -122,14 +122,19 @@ type SystemSettings struct {
 	CustomMenuItems             []CustomMenuItem `json:"custom_menu_items"`
 	CustomEndpoints             []CustomEndpoint `json:"custom_endpoints"`
 
-	DefaultConcurrency           int                          `json:"default_concurrency"`
-	DefaultBalance               float64                      `json:"default_balance"`
-	AffiliateRebateRate          float64                      `json:"affiliate_rebate_rate"`
-	AffiliateRebateFreezeHours   int                          `json:"affiliate_rebate_freeze_hours"`
-	AffiliateRebateDurationDays  int                          `json:"affiliate_rebate_duration_days"`
-	AffiliateRebatePerInviteeCap float64                      `json:"affiliate_rebate_per_invitee_cap"`
-	DefaultUserRPMLimit          int                          `json:"default_user_rpm_limit"`
-	DefaultSubscriptions         []DefaultSubscriptionSetting `json:"default_subscriptions"`
+	DefaultConcurrency                        int                          `json:"default_concurrency"`
+	DefaultBalance                            float64                      `json:"default_balance"`
+	AffiliateRebateRate                       float64                      `json:"affiliate_rebate_rate"`
+	AffiliateRebateFreezeHours                int                          `json:"affiliate_rebate_freeze_hours"`
+	AffiliateRebateDurationDays               int                          `json:"affiliate_rebate_duration_days"`
+	AffiliateRebatePerInviteeCap              float64                      `json:"affiliate_rebate_per_invitee_cap"`
+	PackageRedeemSaleRebateEnabled            bool                         `json:"package_redeem_sale_rebate_enabled"`
+	PackageRedeemSaleRebateDefaultRatePercent float64                      `json:"package_redeem_sale_rebate_default_rate_percent"`
+	PackageRedeemSaleRebateFreezeHours        int                          `json:"package_redeem_sale_rebate_freeze_hours"`
+	PackageRedeemSaleRebatePerRedeemerCap     float64                      `json:"package_redeem_sale_rebate_per_redeemer_cap"`
+	PackageRedeemSaleRebatePerOrderCap        float64                      `json:"package_redeem_sale_rebate_per_order_cap"`
+	DefaultUserRPMLimit                       int                          `json:"default_user_rpm_limit"`
+	DefaultSubscriptions                      []DefaultSubscriptionSetting `json:"default_subscriptions"`
 
 	// Model fallback configuration
 	EnableModelFallback      bool   `json:"enable_model_fallback"`
