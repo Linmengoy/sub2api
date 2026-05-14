@@ -66,6 +66,11 @@ type RedeemCodeRepository interface {
 	SumPositiveBalanceByUser(ctx context.Context, userID int64) (float64, error)
 }
 
+type PackageRedeemSaleRebateProcessor interface {
+	Process(ctx context.Context, redeemCode *RedeemCode, redeemerID int64) error
+	RecordPending(ctx context.Context, redeemCode *RedeemCode, redeemerID int64) error
+}
+
 // GenerateCodesRequest 生成兑换码请求
 type GenerateCodesRequest struct {
 	Count int     `json:"count"`
@@ -91,6 +96,7 @@ type RedeemService struct {
 	entClient            *dbent.Client
 	authCacheInvalidator APIKeyAuthCacheInvalidator
 	affiliateService     *AffiliateService
+	packageSaleRebate    PackageRedeemSaleRebateProcessor
 }
 
 // NewRedeemService 创建兑换码服务实例
@@ -103,6 +109,7 @@ func NewRedeemService(
 	entClient *dbent.Client,
 	authCacheInvalidator APIKeyAuthCacheInvalidator,
 	affiliateService *AffiliateService,
+	packageSaleRebate PackageRedeemSaleRebateProcessor,
 ) *RedeemService {
 	return &RedeemService{
 		redeemRepo:           redeemRepo,
@@ -113,6 +120,7 @@ func NewRedeemService(
 		entClient:            entClient,
 		authCacheInvalidator: authCacheInvalidator,
 		affiliateService:     affiliateService,
+		packageSaleRebate:    packageSaleRebate,
 	}
 }
 
@@ -315,6 +323,14 @@ func (s *RedeemService) Redeem(ctx context.Context, userID int64, code string) (
 
 	// 将事务放入 context，使 repository 方法能够使用同一事务
 	txCtx := dbent.NewTxContext(ctx, tx)
+	if fresh, err := s.redeemRepo.GetByCode(txCtx, redeemCode.Code); err != nil {
+		return nil, fmt.Errorf("get redeem code in transaction: %w", err)
+	} else {
+		redeemCode = fresh
+	}
+	if !redeemCode.CanUse() {
+		return nil, ErrRedeemCodeUsed
+	}
 
 	// 【关键】先标记兑换码为已使用，确保并发安全
 	// 利用数据库乐观锁（WHERE status = 'unused'）保证原子性
@@ -392,8 +408,26 @@ func (s *RedeemService) Redeem(ctx context.Context, userID int64, code string) (
 	if err != nil {
 		return nil, fmt.Errorf("get updated redeem code: %w", err)
 	}
+	// 有购买人的订阅触发销售返利
+	if redeemCode.Type == RedeemTypeSubscription && redeemCode.PurchasedBy != nil && s.packageSaleRebate != nil {
+		if err := s.packageSaleRebate.RecordPending(ctx, redeemCode, userID); err != nil {
+			return nil, fmt.Errorf("record package redeem sale rebate: %w", err)
+		}
+		go s.processPackageRedeemSaleRebate(ctx, redeemCode, userID)
+	}
 
 	return redeemCode, nil
+}
+
+func (s *RedeemService) processPackageRedeemSaleRebate(ctx context.Context, redeemCode *RedeemCode, userID int64) {
+	if s.packageSaleRebate == nil || redeemCode == nil {
+		return
+	}
+	processCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := s.packageSaleRebate.Process(processCtx, redeemCode, userID); err != nil {
+		logger.LegacyPrintf("service.redeem", "[Redeem] package redeem sale rebate failed for code %d user %d: %v", redeemCode.ID, userID, err)
+	}
 }
 
 // invalidateRedeemCaches 失效兑换相关的缓存

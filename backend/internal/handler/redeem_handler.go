@@ -35,6 +35,7 @@ type RedeemResponse struct {
 	NewConcurrency *int     `json:"new_concurrency,omitempty"`
 }
 
+// 使用兑换码服务
 // Redeem handles redeeming a code
 // POST /api/v1/redeem
 func (h *RedeemHandler) Redeem(c *gin.Context) {
@@ -50,6 +51,7 @@ func (h *RedeemHandler) Redeem(c *gin.Context) {
 		return
 	}
 
+	// 兑换
 	result, err := h.redeemService.Redeem(c.Request.Context(), subject.UserID, req.Code)
 	if err != nil {
 		response.ErrorFrom(c, err)

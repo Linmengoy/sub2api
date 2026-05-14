@@ -100,6 +100,76 @@ func (_c *RedeemCodeCreate) SetNillableUsedAt(v *time.Time) *RedeemCodeCreate {
 	return _c
 }
 
+// SetPurchasedBy sets the "purchased_by" field.
+func (_c *RedeemCodeCreate) SetPurchasedBy(v int64) *RedeemCodeCreate {
+	_c.mutation.SetPurchasedBy(v)
+	return _c
+}
+
+// SetNillablePurchasedBy sets the "purchased_by" field if the given value is not nil.
+func (_c *RedeemCodeCreate) SetNillablePurchasedBy(v *int64) *RedeemCodeCreate {
+	if v != nil {
+		_c.SetPurchasedBy(*v)
+	}
+	return _c
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (_c *RedeemCodeCreate) SetPurchaseOrderID(v int64) *RedeemCodeCreate {
+	_c.mutation.SetPurchaseOrderID(v)
+	return _c
+}
+
+// SetNillablePurchaseOrderID sets the "purchase_order_id" field if the given value is not nil.
+func (_c *RedeemCodeCreate) SetNillablePurchaseOrderID(v *int64) *RedeemCodeCreate {
+	if v != nil {
+		_c.SetPurchaseOrderID(*v)
+	}
+	return _c
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (_c *RedeemCodeCreate) SetPurchaseAmount(v float64) *RedeemCodeCreate {
+	_c.mutation.SetPurchaseAmount(v)
+	return _c
+}
+
+// SetNillablePurchaseAmount sets the "purchase_amount" field if the given value is not nil.
+func (_c *RedeemCodeCreate) SetNillablePurchaseAmount(v *float64) *RedeemCodeCreate {
+	if v != nil {
+		_c.SetPurchaseAmount(*v)
+	}
+	return _c
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (_c *RedeemCodeCreate) SetPurchasePayAmount(v float64) *RedeemCodeCreate {
+	_c.mutation.SetPurchasePayAmount(v)
+	return _c
+}
+
+// SetNillablePurchasePayAmount sets the "purchase_pay_amount" field if the given value is not nil.
+func (_c *RedeemCodeCreate) SetNillablePurchasePayAmount(v *float64) *RedeemCodeCreate {
+	if v != nil {
+		_c.SetPurchasePayAmount(*v)
+	}
+	return _c
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (_c *RedeemCodeCreate) SetPurchaseCurrency(v string) *RedeemCodeCreate {
+	_c.mutation.SetPurchaseCurrency(v)
+	return _c
+}
+
+// SetNillablePurchaseCurrency sets the "purchase_currency" field if the given value is not nil.
+func (_c *RedeemCodeCreate) SetNillablePurchaseCurrency(v *string) *RedeemCodeCreate {
+	if v != nil {
+		_c.SetPurchaseCurrency(*v)
+	}
+	return _c
+}
+
 // SetNotes sets the "notes" field.
 func (_c *RedeemCodeCreate) SetNotes(v string) *RedeemCodeCreate {
 	_c.mutation.SetNotes(v)
@@ -227,6 +297,14 @@ func (_c *RedeemCodeCreate) defaults() {
 		v := redeemcode.DefaultStatus
 		_c.mutation.SetStatus(v)
 	}
+	if _, ok := _c.mutation.PurchaseAmount(); !ok {
+		v := redeemcode.DefaultPurchaseAmount
+		_c.mutation.SetPurchaseAmount(v)
+	}
+	if _, ok := _c.mutation.PurchasePayAmount(); !ok {
+		v := redeemcode.DefaultPurchasePayAmount
+		_c.mutation.SetPurchasePayAmount(v)
+	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := redeemcode.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
@@ -264,6 +342,17 @@ func (_c *RedeemCodeCreate) check() error {
 	if v, ok := _c.mutation.Status(); ok {
 		if err := redeemcode.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "RedeemCode.status": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.PurchaseAmount(); !ok {
+		return &ValidationError{Name: "purchase_amount", err: errors.New(`ent: missing required field "RedeemCode.purchase_amount"`)}
+	}
+	if _, ok := _c.mutation.PurchasePayAmount(); !ok {
+		return &ValidationError{Name: "purchase_pay_amount", err: errors.New(`ent: missing required field "RedeemCode.purchase_pay_amount"`)}
+	}
+	if v, ok := _c.mutation.PurchaseCurrency(); ok {
+		if err := redeemcode.PurchaseCurrencyValidator(v); err != nil {
+			return &ValidationError{Name: "purchase_currency", err: fmt.Errorf(`ent: validator failed for field "RedeemCode.purchase_currency": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
@@ -318,6 +407,26 @@ func (_c *RedeemCodeCreate) createSpec() (*RedeemCode, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UsedAt(); ok {
 		_spec.SetField(redeemcode.FieldUsedAt, field.TypeTime, value)
 		_node.UsedAt = &value
+	}
+	if value, ok := _c.mutation.PurchasedBy(); ok {
+		_spec.SetField(redeemcode.FieldPurchasedBy, field.TypeInt64, value)
+		_node.PurchasedBy = &value
+	}
+	if value, ok := _c.mutation.PurchaseOrderID(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseOrderID, field.TypeInt64, value)
+		_node.PurchaseOrderID = &value
+	}
+	if value, ok := _c.mutation.PurchaseAmount(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseAmount, field.TypeFloat64, value)
+		_node.PurchaseAmount = value
+	}
+	if value, ok := _c.mutation.PurchasePayAmount(); ok {
+		_spec.SetField(redeemcode.FieldPurchasePayAmount, field.TypeFloat64, value)
+		_node.PurchasePayAmount = value
+	}
+	if value, ok := _c.mutation.PurchaseCurrency(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseCurrency, field.TypeString, value)
+		_node.PurchaseCurrency = &value
 	}
 	if value, ok := _c.mutation.Notes(); ok {
 		_spec.SetField(redeemcode.FieldNotes, field.TypeString, value)
@@ -504,6 +613,108 @@ func (u *RedeemCodeUpsert) UpdateUsedAt() *RedeemCodeUpsert {
 // ClearUsedAt clears the value of the "used_at" field.
 func (u *RedeemCodeUpsert) ClearUsedAt() *RedeemCodeUpsert {
 	u.SetNull(redeemcode.FieldUsedAt)
+	return u
+}
+
+// SetPurchasedBy sets the "purchased_by" field.
+func (u *RedeemCodeUpsert) SetPurchasedBy(v int64) *RedeemCodeUpsert {
+	u.Set(redeemcode.FieldPurchasedBy, v)
+	return u
+}
+
+// UpdatePurchasedBy sets the "purchased_by" field to the value that was provided on create.
+func (u *RedeemCodeUpsert) UpdatePurchasedBy() *RedeemCodeUpsert {
+	u.SetExcluded(redeemcode.FieldPurchasedBy)
+	return u
+}
+
+// AddPurchasedBy adds v to the "purchased_by" field.
+func (u *RedeemCodeUpsert) AddPurchasedBy(v int64) *RedeemCodeUpsert {
+	u.Add(redeemcode.FieldPurchasedBy, v)
+	return u
+}
+
+// ClearPurchasedBy clears the value of the "purchased_by" field.
+func (u *RedeemCodeUpsert) ClearPurchasedBy() *RedeemCodeUpsert {
+	u.SetNull(redeemcode.FieldPurchasedBy)
+	return u
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (u *RedeemCodeUpsert) SetPurchaseOrderID(v int64) *RedeemCodeUpsert {
+	u.Set(redeemcode.FieldPurchaseOrderID, v)
+	return u
+}
+
+// UpdatePurchaseOrderID sets the "purchase_order_id" field to the value that was provided on create.
+func (u *RedeemCodeUpsert) UpdatePurchaseOrderID() *RedeemCodeUpsert {
+	u.SetExcluded(redeemcode.FieldPurchaseOrderID)
+	return u
+}
+
+// AddPurchaseOrderID adds v to the "purchase_order_id" field.
+func (u *RedeemCodeUpsert) AddPurchaseOrderID(v int64) *RedeemCodeUpsert {
+	u.Add(redeemcode.FieldPurchaseOrderID, v)
+	return u
+}
+
+// ClearPurchaseOrderID clears the value of the "purchase_order_id" field.
+func (u *RedeemCodeUpsert) ClearPurchaseOrderID() *RedeemCodeUpsert {
+	u.SetNull(redeemcode.FieldPurchaseOrderID)
+	return u
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (u *RedeemCodeUpsert) SetPurchaseAmount(v float64) *RedeemCodeUpsert {
+	u.Set(redeemcode.FieldPurchaseAmount, v)
+	return u
+}
+
+// UpdatePurchaseAmount sets the "purchase_amount" field to the value that was provided on create.
+func (u *RedeemCodeUpsert) UpdatePurchaseAmount() *RedeemCodeUpsert {
+	u.SetExcluded(redeemcode.FieldPurchaseAmount)
+	return u
+}
+
+// AddPurchaseAmount adds v to the "purchase_amount" field.
+func (u *RedeemCodeUpsert) AddPurchaseAmount(v float64) *RedeemCodeUpsert {
+	u.Add(redeemcode.FieldPurchaseAmount, v)
+	return u
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (u *RedeemCodeUpsert) SetPurchasePayAmount(v float64) *RedeemCodeUpsert {
+	u.Set(redeemcode.FieldPurchasePayAmount, v)
+	return u
+}
+
+// UpdatePurchasePayAmount sets the "purchase_pay_amount" field to the value that was provided on create.
+func (u *RedeemCodeUpsert) UpdatePurchasePayAmount() *RedeemCodeUpsert {
+	u.SetExcluded(redeemcode.FieldPurchasePayAmount)
+	return u
+}
+
+// AddPurchasePayAmount adds v to the "purchase_pay_amount" field.
+func (u *RedeemCodeUpsert) AddPurchasePayAmount(v float64) *RedeemCodeUpsert {
+	u.Add(redeemcode.FieldPurchasePayAmount, v)
+	return u
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (u *RedeemCodeUpsert) SetPurchaseCurrency(v string) *RedeemCodeUpsert {
+	u.Set(redeemcode.FieldPurchaseCurrency, v)
+	return u
+}
+
+// UpdatePurchaseCurrency sets the "purchase_currency" field to the value that was provided on create.
+func (u *RedeemCodeUpsert) UpdatePurchaseCurrency() *RedeemCodeUpsert {
+	u.SetExcluded(redeemcode.FieldPurchaseCurrency)
+	return u
+}
+
+// ClearPurchaseCurrency clears the value of the "purchase_currency" field.
+func (u *RedeemCodeUpsert) ClearPurchaseCurrency() *RedeemCodeUpsert {
+	u.SetNull(redeemcode.FieldPurchaseCurrency)
 	return u
 }
 
@@ -708,6 +919,125 @@ func (u *RedeemCodeUpsertOne) UpdateUsedAt() *RedeemCodeUpsertOne {
 func (u *RedeemCodeUpsertOne) ClearUsedAt() *RedeemCodeUpsertOne {
 	return u.Update(func(s *RedeemCodeUpsert) {
 		s.ClearUsedAt()
+	})
+}
+
+// SetPurchasedBy sets the "purchased_by" field.
+func (u *RedeemCodeUpsertOne) SetPurchasedBy(v int64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchasedBy(v)
+	})
+}
+
+// AddPurchasedBy adds v to the "purchased_by" field.
+func (u *RedeemCodeUpsertOne) AddPurchasedBy(v int64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchasedBy(v)
+	})
+}
+
+// UpdatePurchasedBy sets the "purchased_by" field to the value that was provided on create.
+func (u *RedeemCodeUpsertOne) UpdatePurchasedBy() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchasedBy()
+	})
+}
+
+// ClearPurchasedBy clears the value of the "purchased_by" field.
+func (u *RedeemCodeUpsertOne) ClearPurchasedBy() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.ClearPurchasedBy()
+	})
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (u *RedeemCodeUpsertOne) SetPurchaseOrderID(v int64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchaseOrderID(v)
+	})
+}
+
+// AddPurchaseOrderID adds v to the "purchase_order_id" field.
+func (u *RedeemCodeUpsertOne) AddPurchaseOrderID(v int64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchaseOrderID(v)
+	})
+}
+
+// UpdatePurchaseOrderID sets the "purchase_order_id" field to the value that was provided on create.
+func (u *RedeemCodeUpsertOne) UpdatePurchaseOrderID() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchaseOrderID()
+	})
+}
+
+// ClearPurchaseOrderID clears the value of the "purchase_order_id" field.
+func (u *RedeemCodeUpsertOne) ClearPurchaseOrderID() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.ClearPurchaseOrderID()
+	})
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (u *RedeemCodeUpsertOne) SetPurchaseAmount(v float64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchaseAmount(v)
+	})
+}
+
+// AddPurchaseAmount adds v to the "purchase_amount" field.
+func (u *RedeemCodeUpsertOne) AddPurchaseAmount(v float64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchaseAmount(v)
+	})
+}
+
+// UpdatePurchaseAmount sets the "purchase_amount" field to the value that was provided on create.
+func (u *RedeemCodeUpsertOne) UpdatePurchaseAmount() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchaseAmount()
+	})
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (u *RedeemCodeUpsertOne) SetPurchasePayAmount(v float64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchasePayAmount(v)
+	})
+}
+
+// AddPurchasePayAmount adds v to the "purchase_pay_amount" field.
+func (u *RedeemCodeUpsertOne) AddPurchasePayAmount(v float64) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchasePayAmount(v)
+	})
+}
+
+// UpdatePurchasePayAmount sets the "purchase_pay_amount" field to the value that was provided on create.
+func (u *RedeemCodeUpsertOne) UpdatePurchasePayAmount() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchasePayAmount()
+	})
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (u *RedeemCodeUpsertOne) SetPurchaseCurrency(v string) *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchaseCurrency(v)
+	})
+}
+
+// UpdatePurchaseCurrency sets the "purchase_currency" field to the value that was provided on create.
+func (u *RedeemCodeUpsertOne) UpdatePurchaseCurrency() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchaseCurrency()
+	})
+}
+
+// ClearPurchaseCurrency clears the value of the "purchase_currency" field.
+func (u *RedeemCodeUpsertOne) ClearPurchaseCurrency() *RedeemCodeUpsertOne {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.ClearPurchaseCurrency()
 	})
 }
 
@@ -1087,6 +1417,125 @@ func (u *RedeemCodeUpsertBulk) UpdateUsedAt() *RedeemCodeUpsertBulk {
 func (u *RedeemCodeUpsertBulk) ClearUsedAt() *RedeemCodeUpsertBulk {
 	return u.Update(func(s *RedeemCodeUpsert) {
 		s.ClearUsedAt()
+	})
+}
+
+// SetPurchasedBy sets the "purchased_by" field.
+func (u *RedeemCodeUpsertBulk) SetPurchasedBy(v int64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchasedBy(v)
+	})
+}
+
+// AddPurchasedBy adds v to the "purchased_by" field.
+func (u *RedeemCodeUpsertBulk) AddPurchasedBy(v int64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchasedBy(v)
+	})
+}
+
+// UpdatePurchasedBy sets the "purchased_by" field to the value that was provided on create.
+func (u *RedeemCodeUpsertBulk) UpdatePurchasedBy() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchasedBy()
+	})
+}
+
+// ClearPurchasedBy clears the value of the "purchased_by" field.
+func (u *RedeemCodeUpsertBulk) ClearPurchasedBy() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.ClearPurchasedBy()
+	})
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (u *RedeemCodeUpsertBulk) SetPurchaseOrderID(v int64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchaseOrderID(v)
+	})
+}
+
+// AddPurchaseOrderID adds v to the "purchase_order_id" field.
+func (u *RedeemCodeUpsertBulk) AddPurchaseOrderID(v int64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchaseOrderID(v)
+	})
+}
+
+// UpdatePurchaseOrderID sets the "purchase_order_id" field to the value that was provided on create.
+func (u *RedeemCodeUpsertBulk) UpdatePurchaseOrderID() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchaseOrderID()
+	})
+}
+
+// ClearPurchaseOrderID clears the value of the "purchase_order_id" field.
+func (u *RedeemCodeUpsertBulk) ClearPurchaseOrderID() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.ClearPurchaseOrderID()
+	})
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (u *RedeemCodeUpsertBulk) SetPurchaseAmount(v float64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchaseAmount(v)
+	})
+}
+
+// AddPurchaseAmount adds v to the "purchase_amount" field.
+func (u *RedeemCodeUpsertBulk) AddPurchaseAmount(v float64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchaseAmount(v)
+	})
+}
+
+// UpdatePurchaseAmount sets the "purchase_amount" field to the value that was provided on create.
+func (u *RedeemCodeUpsertBulk) UpdatePurchaseAmount() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchaseAmount()
+	})
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (u *RedeemCodeUpsertBulk) SetPurchasePayAmount(v float64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchasePayAmount(v)
+	})
+}
+
+// AddPurchasePayAmount adds v to the "purchase_pay_amount" field.
+func (u *RedeemCodeUpsertBulk) AddPurchasePayAmount(v float64) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.AddPurchasePayAmount(v)
+	})
+}
+
+// UpdatePurchasePayAmount sets the "purchase_pay_amount" field to the value that was provided on create.
+func (u *RedeemCodeUpsertBulk) UpdatePurchasePayAmount() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchasePayAmount()
+	})
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (u *RedeemCodeUpsertBulk) SetPurchaseCurrency(v string) *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.SetPurchaseCurrency(v)
+	})
+}
+
+// UpdatePurchaseCurrency sets the "purchase_currency" field to the value that was provided on create.
+func (u *RedeemCodeUpsertBulk) UpdatePurchaseCurrency() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.UpdatePurchaseCurrency()
+	})
+}
+
+// ClearPurchaseCurrency clears the value of the "purchase_currency" field.
+func (u *RedeemCodeUpsertBulk) ClearPurchaseCurrency() *RedeemCodeUpsertBulk {
+	return u.Update(func(s *RedeemCodeUpsert) {
+		s.ClearPurchaseCurrency()
 	})
 }
 

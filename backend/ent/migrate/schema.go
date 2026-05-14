@@ -1118,6 +1118,11 @@ var (
 		{Name: "value", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(20,8)"}},
 		{Name: "status", Type: field.TypeString, Size: 20, Default: "unused"},
 		{Name: "used_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "purchased_by", Type: field.TypeInt64, Nullable: true},
+		{Name: "purchase_order_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "purchase_amount", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(20,2)"}},
+		{Name: "purchase_pay_amount", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(20,2)"}},
+		{Name: "purchase_currency", Type: field.TypeString, Nullable: true, Size: 10},
 		{Name: "notes", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "validity_days", Type: field.TypeInt, Default: 30},
@@ -1132,13 +1137,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "redeem_codes_groups_redeem_codes",
-				Columns:    []*schema.Column{RedeemCodesColumns[9]},
+				Columns:    []*schema.Column{RedeemCodesColumns[14]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "redeem_codes_users_redeem_codes",
-				Columns:    []*schema.Column{RedeemCodesColumns[10]},
+				Columns:    []*schema.Column{RedeemCodesColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1152,12 +1157,25 @@ var (
 			{
 				Name:    "redeemcode_used_by",
 				Unique:  false,
-				Columns: []*schema.Column{RedeemCodesColumns[10]},
+				Columns: []*schema.Column{RedeemCodesColumns[15]},
 			},
 			{
 				Name:    "redeemcode_group_id",
 				Unique:  false,
-				Columns: []*schema.Column{RedeemCodesColumns[9]},
+				Columns: []*schema.Column{RedeemCodesColumns[14]},
+			},
+			{
+				Name:    "redeemcode_purchased_by",
+				Unique:  false,
+				Columns: []*schema.Column{RedeemCodesColumns[6]},
+			},
+			{
+				Name:    "redeemcode_purchase_order_id",
+				Unique:  true,
+				Columns: []*schema.Column{RedeemCodesColumns[7]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "purchase_order_id IS NOT NULL",
+				},
 			},
 		},
 	}

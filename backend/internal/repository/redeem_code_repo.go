@@ -23,7 +23,7 @@ func NewRedeemCodeRepository(client *dbent.Client) service.RedeemCodeRepository 
 }
 
 func (r *redeemCodeRepository) Create(ctx context.Context, code *service.RedeemCode) error {
-	created, err := r.client.RedeemCode.Create().
+	b := r.client.RedeemCode.Create().
 		SetCode(code.Code).
 		SetType(code.Type).
 		SetValue(code.Value).
@@ -33,7 +33,12 @@ func (r *redeemCodeRepository) Create(ctx context.Context, code *service.RedeemC
 		SetNillableUsedBy(code.UsedBy).
 		SetNillableUsedAt(code.UsedAt).
 		SetNillableGroupID(code.GroupID).
-		Save(ctx)
+		SetNillablePurchasedBy(code.PurchasedBy).
+		SetNillablePurchaseOrderID(code.PurchaseOrderID).
+		SetPurchaseAmount(code.PurchaseAmount).
+		SetPurchasePayAmount(code.PurchasePayAmount).
+		SetNillablePurchaseCurrency(code.PurchaseCurrency)
+	created, err := b.Save(ctx)
 	if err == nil {
 		code.ID = created.ID
 		code.CreatedAt = created.CreatedAt
@@ -58,7 +63,12 @@ func (r *redeemCodeRepository) CreateBatch(ctx context.Context, codes []service.
 			SetValidityDays(c.ValidityDays).
 			SetNillableUsedBy(c.UsedBy).
 			SetNillableUsedAt(c.UsedAt).
-			SetNillableGroupID(c.GroupID)
+			SetNillableGroupID(c.GroupID).
+			SetNillablePurchasedBy(c.PurchasedBy).
+			SetNillablePurchaseOrderID(c.PurchaseOrderID).
+			SetPurchaseAmount(c.PurchaseAmount).
+			SetPurchasePayAmount(c.PurchasePayAmount).
+			SetNillablePurchaseCurrency(c.PurchaseCurrency)
 		builders = append(builders, b)
 	}
 
@@ -79,7 +89,8 @@ func (r *redeemCodeRepository) GetByID(ctx context.Context, id int64) (*service.
 }
 
 func (r *redeemCodeRepository) GetByCode(ctx context.Context, code string) (*service.RedeemCode, error) {
-	m, err := r.client.RedeemCode.Query().
+	client := clientFromContext(ctx, r.client)
+	m, err := client.RedeemCode.Query().
 		Where(redeemcode.CodeEQ(code)).
 		Only(ctx)
 	if err != nil {
@@ -177,7 +188,9 @@ func (r *redeemCodeRepository) Update(ctx context.Context, code *service.RedeemC
 		SetValue(code.Value).
 		SetStatus(code.Status).
 		SetNotes(code.Notes).
-		SetValidityDays(code.ValidityDays)
+		SetValidityDays(code.ValidityDays).
+		SetPurchaseAmount(code.PurchaseAmount).
+		SetPurchasePayAmount(code.PurchasePayAmount)
 
 	if code.UsedBy != nil {
 		up.SetUsedBy(*code.UsedBy)
@@ -194,7 +207,21 @@ func (r *redeemCodeRepository) Update(ctx context.Context, code *service.RedeemC
 	} else {
 		up.ClearGroupID()
 	}
-
+	if code.PurchasedBy != nil {
+		up.SetPurchasedBy(*code.PurchasedBy)
+	} else {
+		up.ClearPurchasedBy()
+	}
+	if code.PurchaseOrderID != nil {
+		up.SetPurchaseOrderID(*code.PurchaseOrderID)
+	} else {
+		up.ClearPurchaseOrderID()
+	}
+	if code.PurchaseCurrency != nil {
+		up.SetPurchaseCurrency(*code.PurchaseCurrency)
+	} else {
+		up.ClearPurchaseCurrency()
+	}
 	updated, err := up.Save(ctx)
 	if err != nil {
 		if dbent.IsNotFound(err) {
@@ -298,17 +325,22 @@ func redeemCodeEntityToService(m *dbent.RedeemCode) *service.RedeemCode {
 		return nil
 	}
 	out := &service.RedeemCode{
-		ID:           m.ID,
-		Code:         m.Code,
-		Type:         m.Type,
-		Value:        m.Value,
-		Status:       m.Status,
-		UsedBy:       m.UsedBy,
-		UsedAt:       m.UsedAt,
-		Notes:        derefString(m.Notes),
-		CreatedAt:    m.CreatedAt,
-		GroupID:      m.GroupID,
-		ValidityDays: m.ValidityDays,
+		ID:                m.ID,
+		Code:              m.Code,
+		Type:              m.Type,
+		Value:             m.Value,
+		Status:            m.Status,
+		UsedBy:            m.UsedBy,
+		UsedAt:            m.UsedAt,
+		PurchasedBy:       m.PurchasedBy,
+		PurchaseOrderID:   m.PurchaseOrderID,
+		PurchaseAmount:    m.PurchaseAmount,
+		PurchasePayAmount: m.PurchasePayAmount,
+		PurchaseCurrency:  m.PurchaseCurrency,
+		Notes:             derefString(m.Notes),
+		CreatedAt:         m.CreatedAt,
+		GroupID:           m.GroupID,
+		ValidityDays:      m.ValidityDays,
 	}
 	if m.Edges.User != nil {
 		out.User = userEntityToService(m.Edges.User)

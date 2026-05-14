@@ -18,25 +18,45 @@ import (
 )
 
 // Images handles OpenAI Images API requests.
-// POST /v1/images/generations
-// POST /v1/images/edits
+// Supported endpoints:
+//
+//	POST /v1/images/generations - 图像生成
+//	POST /v1/images/edits - 图像编辑
+//
+// 主要处理流程：
+// 1. 认证与授权检查
+// 2. 请求解析（支持 JSON 和 multipart/form-data）
+// 3. 权限与内容审核
+// 4. 并发控制（图像生成槽位、用户槽位、账户槽位）
+// 5. 计费检查
+// 6. 账户选择与故障转移
+// 7. 请求转发到上游
+// 8. 使用记录
 func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
+	// 标记流式响应是否已开始，用于 panic 恢复时判断是否需要返回错误响应
 	streamStarted := false
+	// 注册 panic 恢复机制，防止异常导致服务崩溃
 	defer h.recoverResponsesPanic(c, &streamStarted)
 
+	// 记录请求开始时间，用于统计各阶段耗时
 	requestStart := time.Now()
 
+	// ========== 阶段1：认证检查 ==========
+	// 从上下文获取 API Key
 	apiKey, ok := middleware2.GetAPIKeyFromContext(c)
 	if !ok {
 		h.errorResponse(c, http.StatusUnauthorized, "authentication_error", "Invalid API key")
 		return
 	}
 
+	// 从上下文获取用户认证信息
 	subject, ok := middleware2.GetAuthSubjectFromContext(c)
 	if !ok {
 		h.errorResponse(c, http.StatusInternalServerError, "api_error", "User context not found")
 		return
 	}
+
+	// 创建请求日志记录器，包含用户和 API Key 信息
 	reqLog := requestLogger(
 		c,
 		"handler.openai_gateway.images",
@@ -44,10 +64,14 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		zap.Int64("api_key_id", apiKey.ID),
 		zap.Any("group_id", apiKey.GroupID),
 	)
+
+	// 检查必要的依赖服务是否可用
 	if !h.ensureResponsesDependencies(c, reqLog) {
 		return
 	}
 
+	// ========== 阶段2：请求体读取 ==========
+	// 读取请求体（预分配内存优化性能）
 	body, err := pkghttputil.ReadRequestBodyWithPrealloc(c.Request)
 	if err != nil {
 		if maxErr, ok := extractMaxBytesError(err); ok {
@@ -62,18 +86,22 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		return
 	}
 
+	// 设置操作日志上下文（先记录空模型，后续更新）
 	if isMultipartImagesContentType(c.GetHeader("Content-Type")) {
 		setOpsRequestContext(c, "", false, nil)
 	} else {
 		setOpsRequestContext(c, "", false, body)
 	}
 
+	// ========== 阶段3：请求解析 ==========
+	// 解析请求体，支持 JSON 和 multipart 两种格式
 	parsed, err := h.gatewayService.ParseOpenAIImagesRequest(c, body)
 	if err != nil {
 		h.errorResponse(c, http.StatusBadRequest, "invalid_request_error", err.Error())
 		return
 	}
 
+	// 更新日志记录器，添加解析后的请求信息
 	reqLog = reqLog.With(
 		zap.String("model", parsed.Model),
 		zap.Bool("stream", parsed.Stream),
@@ -81,14 +109,21 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		zap.String("capability", string(parsed.RequiredCapability)),
 	)
 
+	// ========== 阶段4：权限与内容审核 ==========
+	// 检查分组是否允许图像生成
 	if !service.GroupAllowsImageGeneration(apiKey.Group) {
 		h.errorResponse(c, http.StatusForbidden, "permission_error", service.ImageGenerationPermissionMessage())
 		return
 	}
+
+	// 内容审核检查
 	if decision := h.checkContentModeration(c, reqLog, apiKey, subject, service.ContentModerationProtocolOpenAIImages, parsed.Model, parsed.ModerationBody()); decision != nil && decision.Blocked {
 		h.errorResponse(c, contentModerationStatus(decision), contentModerationErrorCode(decision), decision.Message)
 		return
 	}
+
+	// ========== 阶段5：并发控制 ==========
+	// 获取图像生成槽位（限制同时进行的图像生成请求数）
 	imageReleaseFunc, acquired := h.acquireImageGenerationSlot(c, streamStarted)
 	if !acquired {
 		return
@@ -97,6 +132,7 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		defer imageReleaseFunc()
 	}
 
+	// 更新操作日志上下文（包含模型信息）
 	if parsed.Multipart {
 		setOpsRequestContext(c, parsed.Model, parsed.Stream, nil)
 	} else {
@@ -104,17 +140,22 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 	}
 	setOpsEndpointContext(c, "", int16(service.RequestTypeFromLegacy(parsed.Stream, false)))
 
+	// 解析渠道映射（用于模型路由和计费）
 	channelMapping, _ := h.gatewayService.ResolveChannelMappingAndRestrict(c.Request.Context(), apiKey.GroupID, parsed.Model)
 
+	// 绑定错误透传服务（如果配置了）
 	if h.errorPassthroughService != nil {
 		service.BindErrorPassthroughService(c, h.errorPassthroughService)
 	}
 
+	// 获取订阅信息（用于计费检查）
 	subscription, _ := middleware2.GetSubscriptionFromContext(c)
 
+	// 记录认证阶段耗时
 	service.SetOpsLatencyMs(c, service.OpsAuthLatencyMsKey, time.Since(requestStart).Milliseconds())
 	routingStart := time.Now()
 
+	// 获取用户并发槽位（限制单个用户的并发请求数）
 	userReleaseFunc, acquired := h.acquireResponsesUserSlot(c, subject.UserID, subject.Concurrency, parsed.Stream, &streamStarted, reqLog)
 	if !acquired {
 		return
@@ -123,6 +164,7 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		defer userReleaseFunc()
 	}
 
+	// ========== 阶段6：计费检查 ==========
 	if err := h.billingCacheService.CheckBillingEligibility(c.Request.Context(), apiKey.User, apiKey, apiKey.Group, subscription); err != nil {
 		reqLog.Info("openai.images.billing_eligibility_check_failed", zap.Error(err))
 		status, code, message, retryAfter := billingErrorDetails(err)
@@ -133,16 +175,20 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		return
 	}
 
+	// 生成会话哈希（用于会话粘性和账户选择）
 	sessionHash := h.gatewayService.GenerateExplicitSessionHash(c, body)
 
-	maxAccountSwitches := h.maxAccountSwitches
-	switchCount := 0
-	failedAccountIDs := make(map[int64]struct{})
-	sameAccountRetryCount := make(map[int64]int)
-	var lastFailoverErr *service.UpstreamFailoverError
+	// ========== 阶段7：账户选择与故障转移循环 ==========
+	maxAccountSwitches := h.maxAccountSwitches         // 最大账户切换次数
+	switchCount := 0                                   // 当前切换次数
+	failedAccountIDs := make(map[int64]struct{})       // 已失败的账户ID集合
+	sameAccountRetryCount := make(map[int64]int)       // 同一账户重试次数
+	var lastFailoverErr *service.UpstreamFailoverError // 最后一次故障转移错误
 
 	for {
 		reqLog.Debug("openai.images.account_selecting", zap.Int("excluded_account_count", len(failedAccountIDs)))
+
+		// 使用调度器选择合适的账户
 		selection, scheduleDecision, err := h.gatewayService.SelectAccountWithSchedulerForImages(
 			c.Request.Context(),
 			apiKey.GroupID,
@@ -151,15 +197,19 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 			failedAccountIDs,
 			parsed.RequiredCapability,
 		)
+
+		// 账户选择失败处理
 		if err != nil {
 			reqLog.Warn("openai.images.account_select_failed",
 				zap.Error(err),
 				zap.Int("excluded_account_count", len(failedAccountIDs)),
 			)
 			if len(failedAccountIDs) == 0 {
+				// 首次选择就失败，返回服务不可用
 				h.handleStreamingAwareError(c, http.StatusServiceUnavailable, "api_error", "No available compatible accounts", streamStarted)
 				return
 			}
+			// 所有可用账户都已尝试过，返回失败
 			if lastFailoverErr != nil {
 				h.handleFailoverExhausted(c, lastFailoverErr, streamStarted)
 			} else {
@@ -167,11 +217,13 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 			}
 			return
 		}
+
 		if selection == nil || selection.Account == nil {
 			h.handleStreamingAwareError(c, http.StatusServiceUnavailable, "api_error", "No available compatible accounts", streamStarted)
 			return
 		}
 
+		// 记录调度决策信息
 		reqLog.Debug("openai.images.account_schedule_decision",
 			zap.String("layer", scheduleDecision.Layer),
 			zap.Bool("sticky_session_hit", scheduleDecision.StickySessionHit),
@@ -182,22 +234,33 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		)
 
 		account := selection.Account
+		// 更新会话哈希（池模式下确保会话粘性）
 		sessionHash = ensureOpenAIPoolModeSessionHash(sessionHash, account)
 		reqLog.Debug("openai.images.account_selected", zap.Int64("account_id", account.ID), zap.String("account_name", account.Name))
 		setOpsSelectedAccount(c, account.ID, account.Platform)
 
+		// 获取账户并发槽位（限制单个账户的并发请求数）
 		accountReleaseFunc, acquired := h.acquireResponsesAccountSlot(c, apiKey.GroupID, sessionHash, selection, parsed.Stream, &streamStarted, reqLog)
 		if !acquired {
 			return
 		}
 
+		// ========== 阶段8：请求转发 ==========
+		// 记录路由阶段耗时
 		service.SetOpsLatencyMs(c, service.OpsRoutingLatencyMsKey, time.Since(routingStart).Milliseconds())
 		forwardStart := time.Now()
+
+		// 转发请求到上游
 		result, err := h.gatewayService.ForwardImages(c.Request.Context(), c, account, body, parsed, channelMapping.MappedModel)
+
 		forwardDurationMs := time.Since(forwardStart).Milliseconds()
+
+		// 释放账户槽位
 		if accountReleaseFunc != nil {
 			accountReleaseFunc()
 		}
+
+		// 统计响应耗时
 		upstreamLatencyMs, _ := getContextInt64(c, service.OpsUpstreamLatencyMsKey)
 		responseLatencyMs := forwardDurationMs
 		if upstreamLatencyMs > 0 && forwardDurationMs > upstreamLatencyMs {
@@ -207,7 +270,10 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		if result != nil && result.FirstTokenMs != nil {
 			service.SetOpsLatencyMs(c, service.OpsTimeToFirstTokenMsKey, int64(*result.FirstTokenMs))
 		}
+
+		// ========== 阶段9：错误处理与故障转移 ==========
 		if err != nil {
+			// 部分成功情况：已有图像返回但发生错误
 			if result != nil && result.ImageCount > 0 {
 				reqLog.Warn("openai.images.forward_partial_error_with_image_result",
 					zap.Int64("account_id", account.ID),
@@ -215,9 +281,12 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 					zap.Error(err),
 				)
 			} else {
+				// 故障转移处理
 				var failoverErr *service.UpstreamFailoverError
 				if errors.As(err, &failoverErr) {
 					h.gatewayService.ReportOpenAIAccountScheduleResult(account.ID, false, nil)
+
+					// 池模式下同一账户重试
 					if failoverErr.RetryableOnSameAccount {
 						retryLimit := account.GetPoolModeRetryCount()
 						if sameAccountRetryCount[account.ID] < retryLimit {
@@ -228,6 +297,7 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 								zap.Int("retry_limit", retryLimit),
 								zap.Int("retry_count", sameAccountRetryCount[account.ID]),
 							)
+							// 等待后重试同一账户
 							select {
 							case <-c.Request.Context().Done():
 								return
@@ -236,9 +306,13 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 							continue
 						}
 					}
+
+					// 切换到下一个账户
 					h.gatewayService.RecordOpenAIAccountSwitch()
 					failedAccountIDs[account.ID] = struct{}{}
 					lastFailoverErr = failoverErr
+
+					// 检查是否已达到最大切换次数
 					if switchCount >= maxAccountSwitches {
 						h.handleFailoverExhausted(c, failoverErr, streamStarted)
 						return
@@ -252,6 +326,8 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 					)
 					continue
 				}
+
+				// 非故障转移错误，直接返回
 				h.gatewayService.ReportOpenAIAccountScheduleResult(account.ID, false, nil)
 				wroteFallback := h.ensureForwardErrorResponse(c, streamStarted)
 				fields := []zap.Field{
@@ -267,7 +343,10 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 				return
 			}
 		}
+
+		// ========== 阶段10：成功处理 ==========
 		if result != nil {
+			// 更新 OAuth 账户的使用快照
 			if account.Type == service.AccountTypeOAuth {
 				h.gatewayService.UpdateCodexUsageSnapshotFromHeaders(c.Request.Context(), account.ID, result.ResponseHeaders)
 			}
@@ -276,6 +355,7 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 			h.gatewayService.ReportOpenAIAccountScheduleResult(account.ID, true, nil)
 		}
 
+		// ========== 阶段11：使用记录 ==========
 		userAgent := c.GetHeader("User-Agent")
 		clientIP := ip.GetClientIP(c)
 		requestPayloadHash := service.HashUsageRequestPayload(body)
@@ -289,6 +369,8 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		if result != nil {
 			upstreamModel = result.UpstreamModel
 		}
+
+		// 异步提交使用记录任务
 		h.submitMandatoryUsageRecordTask(func(ctx context.Context) {
 			if err := h.gatewayService.RecordUsage(ctx, &service.OpenAIRecordUsageInput{
 				Result:             result,

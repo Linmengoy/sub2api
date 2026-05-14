@@ -67,9 +67,11 @@ func (h *PaymentWebhookHandler) AirwallexWebhook(c *gin.Context) {
 	h.handleNotify(c, payment.TypeAirwallex)
 }
 
+// 支付回调处理
 // handleNotify is the shared logic for all provider webhook handlers.
 func (h *PaymentWebhookHandler) handleNotify(c *gin.Context, providerKey string) {
 	var rawBody string
+	// 获取传入
 	if c.Request.Method == http.MethodGet {
 		// GET callbacks (e.g. EasyPay) pass params as URL query string
 		rawBody = c.Request.URL.RawQuery
@@ -83,10 +85,12 @@ func (h *PaymentWebhookHandler) handleNotify(c *gin.Context, providerKey string)
 		rawBody = string(body)
 	}
 
+	// 根据渠道解析订单号
 	// Extract out_trade_no to look up the order's specific provider instance.
 	// This is needed when multiple instances of the same provider exist (e.g. multiple EasyPay accounts).
 	outTradeNo := extractOutTradeNo(rawBody, providerKey)
 
+	// 获取支付提供程序
 	providers, err := h.paymentService.GetWebhookProviders(c.Request.Context(), providerKey, outTradeNo)
 	if err != nil {
 		slog.Warn("[Payment Webhook] provider not found", "provider", providerKey, "outTradeNo", outTradeNo, "error", err)
@@ -98,6 +102,8 @@ func (h *PaymentWebhookHandler) handleNotify(c *gin.Context, providerKey string)
 		return
 	}
 
+	// 验证支付通知
+	// Verify the webhook notification with the providers.
 	headers := make(map[string]string)
 	for k := range c.Request.Header {
 		headers[strings.ToLower(k)] = c.GetHeader(k)

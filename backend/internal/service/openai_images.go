@@ -58,6 +58,7 @@ type OpenAIImagesUpload struct {
 	Height      int
 }
 
+// images请求结构体
 type OpenAIImagesRequest struct {
 	Endpoint           string
 	ContentType        string
@@ -197,6 +198,7 @@ func (s *OpenAIGatewayService) ParseOpenAIImagesRequest(c *gin.Context, body []b
 	}
 
 	mediaType, _, err := mime.ParseMediaType(contentType)
+	// 会进这个分支
 	if err == nil && strings.EqualFold(mediaType, "multipart/form-data") {
 		req.Multipart = true
 		if parseErr := parseOpenAIImagesMultipartRequest(body, contentType, req); parseErr != nil {

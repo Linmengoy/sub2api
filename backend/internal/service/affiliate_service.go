@@ -311,6 +311,23 @@ func (s *AffiliateService) BindInviterByCode(ctx context.Context, userID int64, 
 	return nil
 }
 
+func (s *AffiliateService) BindInviterIfAbsent(ctx context.Context, userID, inviterID int64) error {
+	if userID <= 0 || inviterID <= 0 || userID == inviterID {
+		return nil
+	}
+	if s == nil || s.repo == nil {
+		return infraerrors.ServiceUnavailable("SERVICE_UNAVAILABLE", "affiliate service unavailable")
+	}
+	if _, err := s.repo.EnsureUserAffiliate(ctx, userID); err != nil {
+		return err
+	}
+	if _, err := s.repo.EnsureUserAffiliate(ctx, inviterID); err != nil {
+		return err
+	}
+	_, err := s.repo.BindInviter(ctx, userID, inviterID)
+	return err
+}
+
 func (s *AffiliateService) AccrueInviteRebate(ctx context.Context, inviteeUserID int64, baseRechargeAmount float64) (float64, error) {
 	return s.AccrueInviteRebateForOrder(ctx, inviteeUserID, baseRechargeAmount, nil)
 }

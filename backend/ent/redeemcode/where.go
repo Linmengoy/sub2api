@@ -85,6 +85,31 @@ func UsedAt(v time.Time) predicate.RedeemCode {
 	return predicate.RedeemCode(sql.FieldEQ(FieldUsedAt, v))
 }
 
+// PurchasedBy applies equality check predicate on the "purchased_by" field. It's identical to PurchasedByEQ.
+func PurchasedBy(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchasedBy, v))
+}
+
+// PurchaseOrderID applies equality check predicate on the "purchase_order_id" field. It's identical to PurchaseOrderIDEQ.
+func PurchaseOrderID(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchaseOrderID, v))
+}
+
+// PurchaseAmount applies equality check predicate on the "purchase_amount" field. It's identical to PurchaseAmountEQ.
+func PurchaseAmount(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchaseAmount, v))
+}
+
+// PurchasePayAmount applies equality check predicate on the "purchase_pay_amount" field. It's identical to PurchasePayAmountEQ.
+func PurchasePayAmount(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchasePayAmount, v))
+}
+
+// PurchaseCurrency applies equality check predicate on the "purchase_currency" field. It's identical to PurchaseCurrencyEQ.
+func PurchaseCurrency(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchaseCurrency, v))
+}
+
 // Notes applies equality check predicate on the "notes" field. It's identical to NotesEQ.
 func Notes(v string) predicate.RedeemCode {
 	return predicate.RedeemCode(sql.FieldEQ(FieldNotes, v))
@@ -418,6 +443,261 @@ func UsedAtIsNil() predicate.RedeemCode {
 // UsedAtNotNil applies the NotNil predicate on the "used_at" field.
 func UsedAtNotNil() predicate.RedeemCode {
 	return predicate.RedeemCode(sql.FieldNotNull(FieldUsedAt))
+}
+
+// PurchasedByEQ applies the EQ predicate on the "purchased_by" field.
+func PurchasedByEQ(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchasedBy, v))
+}
+
+// PurchasedByNEQ applies the NEQ predicate on the "purchased_by" field.
+func PurchasedByNEQ(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNEQ(FieldPurchasedBy, v))
+}
+
+// PurchasedByIn applies the In predicate on the "purchased_by" field.
+func PurchasedByIn(vs ...int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIn(FieldPurchasedBy, vs...))
+}
+
+// PurchasedByNotIn applies the NotIn predicate on the "purchased_by" field.
+func PurchasedByNotIn(vs ...int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotIn(FieldPurchasedBy, vs...))
+}
+
+// PurchasedByGT applies the GT predicate on the "purchased_by" field.
+func PurchasedByGT(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGT(FieldPurchasedBy, v))
+}
+
+// PurchasedByGTE applies the GTE predicate on the "purchased_by" field.
+func PurchasedByGTE(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGTE(FieldPurchasedBy, v))
+}
+
+// PurchasedByLT applies the LT predicate on the "purchased_by" field.
+func PurchasedByLT(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLT(FieldPurchasedBy, v))
+}
+
+// PurchasedByLTE applies the LTE predicate on the "purchased_by" field.
+func PurchasedByLTE(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLTE(FieldPurchasedBy, v))
+}
+
+// PurchasedByIsNil applies the IsNil predicate on the "purchased_by" field.
+func PurchasedByIsNil() predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIsNull(FieldPurchasedBy))
+}
+
+// PurchasedByNotNil applies the NotNil predicate on the "purchased_by" field.
+func PurchasedByNotNil() predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotNull(FieldPurchasedBy))
+}
+
+// PurchaseOrderIDEQ applies the EQ predicate on the "purchase_order_id" field.
+func PurchaseOrderIDEQ(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchaseOrderID, v))
+}
+
+// PurchaseOrderIDNEQ applies the NEQ predicate on the "purchase_order_id" field.
+func PurchaseOrderIDNEQ(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNEQ(FieldPurchaseOrderID, v))
+}
+
+// PurchaseOrderIDIn applies the In predicate on the "purchase_order_id" field.
+func PurchaseOrderIDIn(vs ...int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIn(FieldPurchaseOrderID, vs...))
+}
+
+// PurchaseOrderIDNotIn applies the NotIn predicate on the "purchase_order_id" field.
+func PurchaseOrderIDNotIn(vs ...int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotIn(FieldPurchaseOrderID, vs...))
+}
+
+// PurchaseOrderIDGT applies the GT predicate on the "purchase_order_id" field.
+func PurchaseOrderIDGT(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGT(FieldPurchaseOrderID, v))
+}
+
+// PurchaseOrderIDGTE applies the GTE predicate on the "purchase_order_id" field.
+func PurchaseOrderIDGTE(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGTE(FieldPurchaseOrderID, v))
+}
+
+// PurchaseOrderIDLT applies the LT predicate on the "purchase_order_id" field.
+func PurchaseOrderIDLT(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLT(FieldPurchaseOrderID, v))
+}
+
+// PurchaseOrderIDLTE applies the LTE predicate on the "purchase_order_id" field.
+func PurchaseOrderIDLTE(v int64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLTE(FieldPurchaseOrderID, v))
+}
+
+// PurchaseOrderIDIsNil applies the IsNil predicate on the "purchase_order_id" field.
+func PurchaseOrderIDIsNil() predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIsNull(FieldPurchaseOrderID))
+}
+
+// PurchaseOrderIDNotNil applies the NotNil predicate on the "purchase_order_id" field.
+func PurchaseOrderIDNotNil() predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotNull(FieldPurchaseOrderID))
+}
+
+// PurchaseAmountEQ applies the EQ predicate on the "purchase_amount" field.
+func PurchaseAmountEQ(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchaseAmount, v))
+}
+
+// PurchaseAmountNEQ applies the NEQ predicate on the "purchase_amount" field.
+func PurchaseAmountNEQ(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNEQ(FieldPurchaseAmount, v))
+}
+
+// PurchaseAmountIn applies the In predicate on the "purchase_amount" field.
+func PurchaseAmountIn(vs ...float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIn(FieldPurchaseAmount, vs...))
+}
+
+// PurchaseAmountNotIn applies the NotIn predicate on the "purchase_amount" field.
+func PurchaseAmountNotIn(vs ...float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotIn(FieldPurchaseAmount, vs...))
+}
+
+// PurchaseAmountGT applies the GT predicate on the "purchase_amount" field.
+func PurchaseAmountGT(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGT(FieldPurchaseAmount, v))
+}
+
+// PurchaseAmountGTE applies the GTE predicate on the "purchase_amount" field.
+func PurchaseAmountGTE(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGTE(FieldPurchaseAmount, v))
+}
+
+// PurchaseAmountLT applies the LT predicate on the "purchase_amount" field.
+func PurchaseAmountLT(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLT(FieldPurchaseAmount, v))
+}
+
+// PurchaseAmountLTE applies the LTE predicate on the "purchase_amount" field.
+func PurchaseAmountLTE(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLTE(FieldPurchaseAmount, v))
+}
+
+// PurchasePayAmountEQ applies the EQ predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountEQ(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchasePayAmount, v))
+}
+
+// PurchasePayAmountNEQ applies the NEQ predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountNEQ(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNEQ(FieldPurchasePayAmount, v))
+}
+
+// PurchasePayAmountIn applies the In predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountIn(vs ...float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIn(FieldPurchasePayAmount, vs...))
+}
+
+// PurchasePayAmountNotIn applies the NotIn predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountNotIn(vs ...float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotIn(FieldPurchasePayAmount, vs...))
+}
+
+// PurchasePayAmountGT applies the GT predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountGT(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGT(FieldPurchasePayAmount, v))
+}
+
+// PurchasePayAmountGTE applies the GTE predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountGTE(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGTE(FieldPurchasePayAmount, v))
+}
+
+// PurchasePayAmountLT applies the LT predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountLT(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLT(FieldPurchasePayAmount, v))
+}
+
+// PurchasePayAmountLTE applies the LTE predicate on the "purchase_pay_amount" field.
+func PurchasePayAmountLTE(v float64) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLTE(FieldPurchasePayAmount, v))
+}
+
+// PurchaseCurrencyEQ applies the EQ predicate on the "purchase_currency" field.
+func PurchaseCurrencyEQ(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEQ(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyNEQ applies the NEQ predicate on the "purchase_currency" field.
+func PurchaseCurrencyNEQ(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNEQ(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyIn applies the In predicate on the "purchase_currency" field.
+func PurchaseCurrencyIn(vs ...string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIn(FieldPurchaseCurrency, vs...))
+}
+
+// PurchaseCurrencyNotIn applies the NotIn predicate on the "purchase_currency" field.
+func PurchaseCurrencyNotIn(vs ...string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotIn(FieldPurchaseCurrency, vs...))
+}
+
+// PurchaseCurrencyGT applies the GT predicate on the "purchase_currency" field.
+func PurchaseCurrencyGT(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGT(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyGTE applies the GTE predicate on the "purchase_currency" field.
+func PurchaseCurrencyGTE(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldGTE(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyLT applies the LT predicate on the "purchase_currency" field.
+func PurchaseCurrencyLT(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLT(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyLTE applies the LTE predicate on the "purchase_currency" field.
+func PurchaseCurrencyLTE(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldLTE(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyContains applies the Contains predicate on the "purchase_currency" field.
+func PurchaseCurrencyContains(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldContains(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyHasPrefix applies the HasPrefix predicate on the "purchase_currency" field.
+func PurchaseCurrencyHasPrefix(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldHasPrefix(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyHasSuffix applies the HasSuffix predicate on the "purchase_currency" field.
+func PurchaseCurrencyHasSuffix(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldHasSuffix(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyIsNil applies the IsNil predicate on the "purchase_currency" field.
+func PurchaseCurrencyIsNil() predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldIsNull(FieldPurchaseCurrency))
+}
+
+// PurchaseCurrencyNotNil applies the NotNil predicate on the "purchase_currency" field.
+func PurchaseCurrencyNotNil() predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldNotNull(FieldPurchaseCurrency))
+}
+
+// PurchaseCurrencyEqualFold applies the EqualFold predicate on the "purchase_currency" field.
+func PurchaseCurrencyEqualFold(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldEqualFold(FieldPurchaseCurrency, v))
+}
+
+// PurchaseCurrencyContainsFold applies the ContainsFold predicate on the "purchase_currency" field.
+func PurchaseCurrencyContainsFold(v string) predicate.RedeemCode {
+	return predicate.RedeemCode(sql.FieldContainsFold(FieldPurchaseCurrency, v))
 }
 
 // NotesEQ applies the EQ predicate on the "notes" field.

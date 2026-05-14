@@ -138,3 +138,4 @@ aicodex
 output/
 build-mac.sh
 build-win.bat
+build-win-test.bat

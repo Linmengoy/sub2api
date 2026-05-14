@@ -133,6 +133,122 @@ func (_u *RedeemCodeUpdate) ClearUsedAt() *RedeemCodeUpdate {
 	return _u
 }
 
+// SetPurchasedBy sets the "purchased_by" field.
+func (_u *RedeemCodeUpdate) SetPurchasedBy(v int64) *RedeemCodeUpdate {
+	_u.mutation.ResetPurchasedBy()
+	_u.mutation.SetPurchasedBy(v)
+	return _u
+}
+
+// SetNillablePurchasedBy sets the "purchased_by" field if the given value is not nil.
+func (_u *RedeemCodeUpdate) SetNillablePurchasedBy(v *int64) *RedeemCodeUpdate {
+	if v != nil {
+		_u.SetPurchasedBy(*v)
+	}
+	return _u
+}
+
+// AddPurchasedBy adds value to the "purchased_by" field.
+func (_u *RedeemCodeUpdate) AddPurchasedBy(v int64) *RedeemCodeUpdate {
+	_u.mutation.AddPurchasedBy(v)
+	return _u
+}
+
+// ClearPurchasedBy clears the value of the "purchased_by" field.
+func (_u *RedeemCodeUpdate) ClearPurchasedBy() *RedeemCodeUpdate {
+	_u.mutation.ClearPurchasedBy()
+	return _u
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (_u *RedeemCodeUpdate) SetPurchaseOrderID(v int64) *RedeemCodeUpdate {
+	_u.mutation.ResetPurchaseOrderID()
+	_u.mutation.SetPurchaseOrderID(v)
+	return _u
+}
+
+// SetNillablePurchaseOrderID sets the "purchase_order_id" field if the given value is not nil.
+func (_u *RedeemCodeUpdate) SetNillablePurchaseOrderID(v *int64) *RedeemCodeUpdate {
+	if v != nil {
+		_u.SetPurchaseOrderID(*v)
+	}
+	return _u
+}
+
+// AddPurchaseOrderID adds value to the "purchase_order_id" field.
+func (_u *RedeemCodeUpdate) AddPurchaseOrderID(v int64) *RedeemCodeUpdate {
+	_u.mutation.AddPurchaseOrderID(v)
+	return _u
+}
+
+// ClearPurchaseOrderID clears the value of the "purchase_order_id" field.
+func (_u *RedeemCodeUpdate) ClearPurchaseOrderID() *RedeemCodeUpdate {
+	_u.mutation.ClearPurchaseOrderID()
+	return _u
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (_u *RedeemCodeUpdate) SetPurchaseAmount(v float64) *RedeemCodeUpdate {
+	_u.mutation.ResetPurchaseAmount()
+	_u.mutation.SetPurchaseAmount(v)
+	return _u
+}
+
+// SetNillablePurchaseAmount sets the "purchase_amount" field if the given value is not nil.
+func (_u *RedeemCodeUpdate) SetNillablePurchaseAmount(v *float64) *RedeemCodeUpdate {
+	if v != nil {
+		_u.SetPurchaseAmount(*v)
+	}
+	return _u
+}
+
+// AddPurchaseAmount adds value to the "purchase_amount" field.
+func (_u *RedeemCodeUpdate) AddPurchaseAmount(v float64) *RedeemCodeUpdate {
+	_u.mutation.AddPurchaseAmount(v)
+	return _u
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (_u *RedeemCodeUpdate) SetPurchasePayAmount(v float64) *RedeemCodeUpdate {
+	_u.mutation.ResetPurchasePayAmount()
+	_u.mutation.SetPurchasePayAmount(v)
+	return _u
+}
+
+// SetNillablePurchasePayAmount sets the "purchase_pay_amount" field if the given value is not nil.
+func (_u *RedeemCodeUpdate) SetNillablePurchasePayAmount(v *float64) *RedeemCodeUpdate {
+	if v != nil {
+		_u.SetPurchasePayAmount(*v)
+	}
+	return _u
+}
+
+// AddPurchasePayAmount adds value to the "purchase_pay_amount" field.
+func (_u *RedeemCodeUpdate) AddPurchasePayAmount(v float64) *RedeemCodeUpdate {
+	_u.mutation.AddPurchasePayAmount(v)
+	return _u
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (_u *RedeemCodeUpdate) SetPurchaseCurrency(v string) *RedeemCodeUpdate {
+	_u.mutation.SetPurchaseCurrency(v)
+	return _u
+}
+
+// SetNillablePurchaseCurrency sets the "purchase_currency" field if the given value is not nil.
+func (_u *RedeemCodeUpdate) SetNillablePurchaseCurrency(v *string) *RedeemCodeUpdate {
+	if v != nil {
+		_u.SetPurchaseCurrency(*v)
+	}
+	return _u
+}
+
+// ClearPurchaseCurrency clears the value of the "purchase_currency" field.
+func (_u *RedeemCodeUpdate) ClearPurchaseCurrency() *RedeemCodeUpdate {
+	_u.mutation.ClearPurchaseCurrency()
+	return _u
+}
+
 // SetNotes sets the "notes" field.
 func (_u *RedeemCodeUpdate) SetNotes(v string) *RedeemCodeUpdate {
 	_u.mutation.SetNotes(v)
@@ -279,6 +395,11 @@ func (_u *RedeemCodeUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "RedeemCode.status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.PurchaseCurrency(); ok {
+		if err := redeemcode.PurchaseCurrencyValidator(v); err != nil {
+			return &ValidationError{Name: "purchase_currency", err: fmt.Errorf(`ent: validator failed for field "RedeemCode.purchase_currency": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -314,6 +435,42 @@ func (_u *RedeemCodeUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if _u.mutation.UsedAtCleared() {
 		_spec.ClearField(redeemcode.FieldUsedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.PurchasedBy(); ok {
+		_spec.SetField(redeemcode.FieldPurchasedBy, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchasedBy(); ok {
+		_spec.AddField(redeemcode.FieldPurchasedBy, field.TypeInt64, value)
+	}
+	if _u.mutation.PurchasedByCleared() {
+		_spec.ClearField(redeemcode.FieldPurchasedBy, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.PurchaseOrderID(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseOrderID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchaseOrderID(); ok {
+		_spec.AddField(redeemcode.FieldPurchaseOrderID, field.TypeInt64, value)
+	}
+	if _u.mutation.PurchaseOrderIDCleared() {
+		_spec.ClearField(redeemcode.FieldPurchaseOrderID, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.PurchaseAmount(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchaseAmount(); ok {
+		_spec.AddField(redeemcode.FieldPurchaseAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.PurchasePayAmount(); ok {
+		_spec.SetField(redeemcode.FieldPurchasePayAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchasePayAmount(); ok {
+		_spec.AddField(redeemcode.FieldPurchasePayAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.PurchaseCurrency(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseCurrency, field.TypeString, value)
+	}
+	if _u.mutation.PurchaseCurrencyCleared() {
+		_spec.ClearField(redeemcode.FieldPurchaseCurrency, field.TypeString)
 	}
 	if value, ok := _u.mutation.Notes(); ok {
 		_spec.SetField(redeemcode.FieldNotes, field.TypeString, value)
@@ -508,6 +665,122 @@ func (_u *RedeemCodeUpdateOne) ClearUsedAt() *RedeemCodeUpdateOne {
 	return _u
 }
 
+// SetPurchasedBy sets the "purchased_by" field.
+func (_u *RedeemCodeUpdateOne) SetPurchasedBy(v int64) *RedeemCodeUpdateOne {
+	_u.mutation.ResetPurchasedBy()
+	_u.mutation.SetPurchasedBy(v)
+	return _u
+}
+
+// SetNillablePurchasedBy sets the "purchased_by" field if the given value is not nil.
+func (_u *RedeemCodeUpdateOne) SetNillablePurchasedBy(v *int64) *RedeemCodeUpdateOne {
+	if v != nil {
+		_u.SetPurchasedBy(*v)
+	}
+	return _u
+}
+
+// AddPurchasedBy adds value to the "purchased_by" field.
+func (_u *RedeemCodeUpdateOne) AddPurchasedBy(v int64) *RedeemCodeUpdateOne {
+	_u.mutation.AddPurchasedBy(v)
+	return _u
+}
+
+// ClearPurchasedBy clears the value of the "purchased_by" field.
+func (_u *RedeemCodeUpdateOne) ClearPurchasedBy() *RedeemCodeUpdateOne {
+	_u.mutation.ClearPurchasedBy()
+	return _u
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (_u *RedeemCodeUpdateOne) SetPurchaseOrderID(v int64) *RedeemCodeUpdateOne {
+	_u.mutation.ResetPurchaseOrderID()
+	_u.mutation.SetPurchaseOrderID(v)
+	return _u
+}
+
+// SetNillablePurchaseOrderID sets the "purchase_order_id" field if the given value is not nil.
+func (_u *RedeemCodeUpdateOne) SetNillablePurchaseOrderID(v *int64) *RedeemCodeUpdateOne {
+	if v != nil {
+		_u.SetPurchaseOrderID(*v)
+	}
+	return _u
+}
+
+// AddPurchaseOrderID adds value to the "purchase_order_id" field.
+func (_u *RedeemCodeUpdateOne) AddPurchaseOrderID(v int64) *RedeemCodeUpdateOne {
+	_u.mutation.AddPurchaseOrderID(v)
+	return _u
+}
+
+// ClearPurchaseOrderID clears the value of the "purchase_order_id" field.
+func (_u *RedeemCodeUpdateOne) ClearPurchaseOrderID() *RedeemCodeUpdateOne {
+	_u.mutation.ClearPurchaseOrderID()
+	return _u
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (_u *RedeemCodeUpdateOne) SetPurchaseAmount(v float64) *RedeemCodeUpdateOne {
+	_u.mutation.ResetPurchaseAmount()
+	_u.mutation.SetPurchaseAmount(v)
+	return _u
+}
+
+// SetNillablePurchaseAmount sets the "purchase_amount" field if the given value is not nil.
+func (_u *RedeemCodeUpdateOne) SetNillablePurchaseAmount(v *float64) *RedeemCodeUpdateOne {
+	if v != nil {
+		_u.SetPurchaseAmount(*v)
+	}
+	return _u
+}
+
+// AddPurchaseAmount adds value to the "purchase_amount" field.
+func (_u *RedeemCodeUpdateOne) AddPurchaseAmount(v float64) *RedeemCodeUpdateOne {
+	_u.mutation.AddPurchaseAmount(v)
+	return _u
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (_u *RedeemCodeUpdateOne) SetPurchasePayAmount(v float64) *RedeemCodeUpdateOne {
+	_u.mutation.ResetPurchasePayAmount()
+	_u.mutation.SetPurchasePayAmount(v)
+	return _u
+}
+
+// SetNillablePurchasePayAmount sets the "purchase_pay_amount" field if the given value is not nil.
+func (_u *RedeemCodeUpdateOne) SetNillablePurchasePayAmount(v *float64) *RedeemCodeUpdateOne {
+	if v != nil {
+		_u.SetPurchasePayAmount(*v)
+	}
+	return _u
+}
+
+// AddPurchasePayAmount adds value to the "purchase_pay_amount" field.
+func (_u *RedeemCodeUpdateOne) AddPurchasePayAmount(v float64) *RedeemCodeUpdateOne {
+	_u.mutation.AddPurchasePayAmount(v)
+	return _u
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (_u *RedeemCodeUpdateOne) SetPurchaseCurrency(v string) *RedeemCodeUpdateOne {
+	_u.mutation.SetPurchaseCurrency(v)
+	return _u
+}
+
+// SetNillablePurchaseCurrency sets the "purchase_currency" field if the given value is not nil.
+func (_u *RedeemCodeUpdateOne) SetNillablePurchaseCurrency(v *string) *RedeemCodeUpdateOne {
+	if v != nil {
+		_u.SetPurchaseCurrency(*v)
+	}
+	return _u
+}
+
+// ClearPurchaseCurrency clears the value of the "purchase_currency" field.
+func (_u *RedeemCodeUpdateOne) ClearPurchaseCurrency() *RedeemCodeUpdateOne {
+	_u.mutation.ClearPurchaseCurrency()
+	return _u
+}
+
 // SetNotes sets the "notes" field.
 func (_u *RedeemCodeUpdateOne) SetNotes(v string) *RedeemCodeUpdateOne {
 	_u.mutation.SetNotes(v)
@@ -667,6 +940,11 @@ func (_u *RedeemCodeUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "RedeemCode.status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.PurchaseCurrency(); ok {
+		if err := redeemcode.PurchaseCurrencyValidator(v); err != nil {
+			return &ValidationError{Name: "purchase_currency", err: fmt.Errorf(`ent: validator failed for field "RedeemCode.purchase_currency": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -719,6 +997,42 @@ func (_u *RedeemCodeUpdateOne) sqlSave(ctx context.Context) (_node *RedeemCode, 
 	}
 	if _u.mutation.UsedAtCleared() {
 		_spec.ClearField(redeemcode.FieldUsedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.PurchasedBy(); ok {
+		_spec.SetField(redeemcode.FieldPurchasedBy, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchasedBy(); ok {
+		_spec.AddField(redeemcode.FieldPurchasedBy, field.TypeInt64, value)
+	}
+	if _u.mutation.PurchasedByCleared() {
+		_spec.ClearField(redeemcode.FieldPurchasedBy, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.PurchaseOrderID(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseOrderID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchaseOrderID(); ok {
+		_spec.AddField(redeemcode.FieldPurchaseOrderID, field.TypeInt64, value)
+	}
+	if _u.mutation.PurchaseOrderIDCleared() {
+		_spec.ClearField(redeemcode.FieldPurchaseOrderID, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.PurchaseAmount(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchaseAmount(); ok {
+		_spec.AddField(redeemcode.FieldPurchaseAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.PurchasePayAmount(); ok {
+		_spec.SetField(redeemcode.FieldPurchasePayAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedPurchasePayAmount(); ok {
+		_spec.AddField(redeemcode.FieldPurchasePayAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.PurchaseCurrency(); ok {
+		_spec.SetField(redeemcode.FieldPurchaseCurrency, field.TypeString, value)
+	}
+	if _u.mutation.PurchaseCurrencyCleared() {
+		_spec.ClearField(redeemcode.FieldPurchaseCurrency, field.TypeString)
 	}
 	if value, ok := _u.mutation.Notes(); ok {
 		_spec.SetField(redeemcode.FieldNotes, field.TypeString, value)

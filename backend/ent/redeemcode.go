@@ -31,6 +31,16 @@ type RedeemCode struct {
 	UsedBy *int64 `json:"used_by,omitempty"`
 	// UsedAt holds the value of the "used_at" field.
 	UsedAt *time.Time `json:"used_at,omitempty"`
+	// PurchasedBy holds the value of the "purchased_by" field.
+	PurchasedBy *int64 `json:"purchased_by,omitempty"`
+	// PurchaseOrderID holds the value of the "purchase_order_id" field.
+	PurchaseOrderID *int64 `json:"purchase_order_id,omitempty"`
+	// PurchaseAmount holds the value of the "purchase_amount" field.
+	PurchaseAmount float64 `json:"purchase_amount,omitempty"`
+	// PurchasePayAmount holds the value of the "purchase_pay_amount" field.
+	PurchasePayAmount float64 `json:"purchase_pay_amount,omitempty"`
+	// PurchaseCurrency holds the value of the "purchase_currency" field.
+	PurchaseCurrency *string `json:"purchase_currency,omitempty"`
 	// Notes holds the value of the "notes" field.
 	Notes *string `json:"notes,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -83,11 +93,11 @@ func (*RedeemCode) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case redeemcode.FieldValue:
+		case redeemcode.FieldValue, redeemcode.FieldPurchaseAmount, redeemcode.FieldPurchasePayAmount:
 			values[i] = new(sql.NullFloat64)
-		case redeemcode.FieldID, redeemcode.FieldUsedBy, redeemcode.FieldGroupID, redeemcode.FieldValidityDays:
+		case redeemcode.FieldID, redeemcode.FieldUsedBy, redeemcode.FieldPurchasedBy, redeemcode.FieldPurchaseOrderID, redeemcode.FieldGroupID, redeemcode.FieldValidityDays:
 			values[i] = new(sql.NullInt64)
-		case redeemcode.FieldCode, redeemcode.FieldType, redeemcode.FieldStatus, redeemcode.FieldNotes:
+		case redeemcode.FieldCode, redeemcode.FieldType, redeemcode.FieldStatus, redeemcode.FieldPurchaseCurrency, redeemcode.FieldNotes:
 			values[i] = new(sql.NullString)
 		case redeemcode.FieldUsedAt, redeemcode.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -149,6 +159,39 @@ func (_m *RedeemCode) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UsedAt = new(time.Time)
 				*_m.UsedAt = value.Time
+			}
+		case redeemcode.FieldPurchasedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field purchased_by", values[i])
+			} else if value.Valid {
+				_m.PurchasedBy = new(int64)
+				*_m.PurchasedBy = value.Int64
+			}
+		case redeemcode.FieldPurchaseOrderID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field purchase_order_id", values[i])
+			} else if value.Valid {
+				_m.PurchaseOrderID = new(int64)
+				*_m.PurchaseOrderID = value.Int64
+			}
+		case redeemcode.FieldPurchaseAmount:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field purchase_amount", values[i])
+			} else if value.Valid {
+				_m.PurchaseAmount = value.Float64
+			}
+		case redeemcode.FieldPurchasePayAmount:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field purchase_pay_amount", values[i])
+			} else if value.Valid {
+				_m.PurchasePayAmount = value.Float64
+			}
+		case redeemcode.FieldPurchaseCurrency:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field purchase_currency", values[i])
+			} else if value.Valid {
+				_m.PurchaseCurrency = new(string)
+				*_m.PurchaseCurrency = value.String
 			}
 		case redeemcode.FieldNotes:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -242,6 +285,27 @@ func (_m *RedeemCode) String() string {
 	if v := _m.UsedAt; v != nil {
 		builder.WriteString("used_at=")
 		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.PurchasedBy; v != nil {
+		builder.WriteString("purchased_by=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.PurchaseOrderID; v != nil {
+		builder.WriteString("purchase_order_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("purchase_amount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.PurchaseAmount))
+	builder.WriteString(", ")
+	builder.WriteString("purchase_pay_amount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.PurchasePayAmount))
+	builder.WriteString(", ")
+	if v := _m.PurchaseCurrency; v != nil {
+		builder.WriteString("purchase_currency=")
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	if v := _m.Notes; v != nil {

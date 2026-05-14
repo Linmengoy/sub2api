@@ -55,6 +55,22 @@ func (RedeemCode) Fields() []ent.Field {
 			Optional().
 			Nillable().
 			SchemaType(map[string]string{dialect.Postgres: "timestamptz"}),
+		field.Int64("purchased_by").
+			Optional().
+			Nillable(),
+		field.Int64("purchase_order_id").
+			Optional().
+			Nillable(),
+		field.Float("purchase_amount").
+			SchemaType(map[string]string{dialect.Postgres: "decimal(20,2)"}).
+			Default(0),
+		field.Float("purchase_pay_amount").
+			SchemaType(map[string]string{dialect.Postgres: "decimal(20,2)"}).
+			Default(0),
+		field.String("purchase_currency").
+			Optional().
+			Nillable().
+			MaxLen(10),
 		field.String("notes").
 			Optional().
 			Nillable().
@@ -90,5 +106,9 @@ func (RedeemCode) Indexes() []ent.Index {
 		index.Fields("status"),
 		index.Fields("used_by"),
 		index.Fields("group_id"),
+		index.Fields("purchased_by"),
+		index.Fields("purchase_order_id").
+			Unique().
+			Annotations(entsql.IndexWhere("purchase_order_id IS NOT NULL")),
 	}
 }

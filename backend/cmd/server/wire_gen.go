@@ -8,6 +8,11 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"sync"
+	"time"
+
 	"github.com/Wei-Shaw/sub2api/ent"
 	"github.com/Wei-Shaw/sub2api/internal/config"
 	"github.com/Wei-Shaw/sub2api/internal/handler"
@@ -18,14 +23,9 @@ import (
 	"github.com/Wei-Shaw/sub2api/internal/server/middleware"
 	"github.com/Wei-Shaw/sub2api/internal/service"
 	"github.com/redis/go-redis/v9"
-	"log"
-	"net/http"
-	"sync"
-	"time"
-)
 
-import (
 	_ "embed"
+
 	_ "github.com/Wei-Shaw/sub2api/ent/runtime"
 )
 
@@ -71,10 +71,13 @@ func initializeApplication(buildInfo handler.BuildInfo) (*Application, error) {
 	subscriptionService := service.NewSubscriptionService(groupRepository, userSubscriptionRepository, billingCacheService, client, configConfig)
 	affiliateRepository := repository.NewAffiliateRepository(client, db)
 	affiliateService := service.NewAffiliateService(affiliateRepository, settingService, apiKeyAuthCacheInvalidator, billingCacheService)
+	packageRedeemSaleRebateRepository := repository.NewPackageRedeemSaleRebateRepository(client)
+	packageRedeemSaleLedgerRepository := repository.NewPackageRedeemSaleLedgerRepository(client)
+	packageRedeemSaleRebateService := service.NewPackageRedeemSaleRebateService(packageRedeemSaleRebateRepository, packageRedeemSaleLedgerRepository, settingService, affiliateService, client, apiKeyAuthCacheInvalidator, billingCacheService)
 	authService := service.NewAuthService(client, userRepository, redeemCodeRepository, refreshTokenCache, configConfig, settingService, emailService, turnstileService, emailQueueService, promoService, subscriptionService, affiliateService)
 	userService := service.NewUserService(userRepository, settingRepository, apiKeyAuthCacheInvalidator, billingCache)
 	redeemCache := repository.NewRedeemCache(redisClient)
-	redeemService := service.NewRedeemService(redeemCodeRepository, userRepository, subscriptionService, redeemCache, billingCacheService, client, apiKeyAuthCacheInvalidator, affiliateService)
+	redeemService := service.NewRedeemService(redeemCodeRepository, userRepository, subscriptionService, redeemCache, billingCacheService, client, apiKeyAuthCacheInvalidator, affiliateService, packageRedeemSaleRebateService)
 	secretEncryptor, err := repository.NewAESEncryptor(configConfig)
 	if err != nil {
 		return nil, err

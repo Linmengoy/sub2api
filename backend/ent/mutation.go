@@ -28591,27 +28591,36 @@ func (m *ProxyMutation) ResetEdge(name string) error {
 // RedeemCodeMutation represents an operation that mutates the RedeemCode nodes in the graph.
 type RedeemCodeMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int64
-	code             *string
-	_type            *string
-	value            *float64
-	addvalue         *float64
-	status           *string
-	used_at          *time.Time
-	notes            *string
-	created_at       *time.Time
-	validity_days    *int
-	addvalidity_days *int
-	clearedFields    map[string]struct{}
-	user             *int64
-	cleareduser      bool
-	group            *int64
-	clearedgroup     bool
-	done             bool
-	oldValue         func(context.Context) (*RedeemCode, error)
-	predicates       []predicate.RedeemCode
+	op                     Op
+	typ                    string
+	id                     *int64
+	code                   *string
+	_type                  *string
+	value                  *float64
+	addvalue               *float64
+	status                 *string
+	used_at                *time.Time
+	purchased_by           *int64
+	addpurchased_by        *int64
+	purchase_order_id      *int64
+	addpurchase_order_id   *int64
+	purchase_amount        *float64
+	addpurchase_amount     *float64
+	purchase_pay_amount    *float64
+	addpurchase_pay_amount *float64
+	purchase_currency      *string
+	notes                  *string
+	created_at             *time.Time
+	validity_days          *int
+	addvalidity_days       *int
+	clearedFields          map[string]struct{}
+	user                   *int64
+	cleareduser            bool
+	group                  *int64
+	clearedgroup           bool
+	done                   bool
+	oldValue               func(context.Context) (*RedeemCode, error)
+	predicates             []predicate.RedeemCode
 }
 
 var _ ent.Mutation = (*RedeemCodeMutation)(nil)
@@ -28974,6 +28983,307 @@ func (m *RedeemCodeMutation) ResetUsedAt() {
 	delete(m.clearedFields, redeemcode.FieldUsedAt)
 }
 
+// SetPurchasedBy sets the "purchased_by" field.
+func (m *RedeemCodeMutation) SetPurchasedBy(i int64) {
+	m.purchased_by = &i
+	m.addpurchased_by = nil
+}
+
+// PurchasedBy returns the value of the "purchased_by" field in the mutation.
+func (m *RedeemCodeMutation) PurchasedBy() (r int64, exists bool) {
+	v := m.purchased_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPurchasedBy returns the old "purchased_by" field's value of the RedeemCode entity.
+// If the RedeemCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedeemCodeMutation) OldPurchasedBy(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPurchasedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPurchasedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPurchasedBy: %w", err)
+	}
+	return oldValue.PurchasedBy, nil
+}
+
+// AddPurchasedBy adds i to the "purchased_by" field.
+func (m *RedeemCodeMutation) AddPurchasedBy(i int64) {
+	if m.addpurchased_by != nil {
+		*m.addpurchased_by += i
+	} else {
+		m.addpurchased_by = &i
+	}
+}
+
+// AddedPurchasedBy returns the value that was added to the "purchased_by" field in this mutation.
+func (m *RedeemCodeMutation) AddedPurchasedBy() (r int64, exists bool) {
+	v := m.addpurchased_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPurchasedBy clears the value of the "purchased_by" field.
+func (m *RedeemCodeMutation) ClearPurchasedBy() {
+	m.purchased_by = nil
+	m.addpurchased_by = nil
+	m.clearedFields[redeemcode.FieldPurchasedBy] = struct{}{}
+}
+
+// PurchasedByCleared returns if the "purchased_by" field was cleared in this mutation.
+func (m *RedeemCodeMutation) PurchasedByCleared() bool {
+	_, ok := m.clearedFields[redeemcode.FieldPurchasedBy]
+	return ok
+}
+
+// ResetPurchasedBy resets all changes to the "purchased_by" field.
+func (m *RedeemCodeMutation) ResetPurchasedBy() {
+	m.purchased_by = nil
+	m.addpurchased_by = nil
+	delete(m.clearedFields, redeemcode.FieldPurchasedBy)
+}
+
+// SetPurchaseOrderID sets the "purchase_order_id" field.
+func (m *RedeemCodeMutation) SetPurchaseOrderID(i int64) {
+	m.purchase_order_id = &i
+	m.addpurchase_order_id = nil
+}
+
+// PurchaseOrderID returns the value of the "purchase_order_id" field in the mutation.
+func (m *RedeemCodeMutation) PurchaseOrderID() (r int64, exists bool) {
+	v := m.purchase_order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPurchaseOrderID returns the old "purchase_order_id" field's value of the RedeemCode entity.
+// If the RedeemCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedeemCodeMutation) OldPurchaseOrderID(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPurchaseOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPurchaseOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPurchaseOrderID: %w", err)
+	}
+	return oldValue.PurchaseOrderID, nil
+}
+
+// AddPurchaseOrderID adds i to the "purchase_order_id" field.
+func (m *RedeemCodeMutation) AddPurchaseOrderID(i int64) {
+	if m.addpurchase_order_id != nil {
+		*m.addpurchase_order_id += i
+	} else {
+		m.addpurchase_order_id = &i
+	}
+}
+
+// AddedPurchaseOrderID returns the value that was added to the "purchase_order_id" field in this mutation.
+func (m *RedeemCodeMutation) AddedPurchaseOrderID() (r int64, exists bool) {
+	v := m.addpurchase_order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPurchaseOrderID clears the value of the "purchase_order_id" field.
+func (m *RedeemCodeMutation) ClearPurchaseOrderID() {
+	m.purchase_order_id = nil
+	m.addpurchase_order_id = nil
+	m.clearedFields[redeemcode.FieldPurchaseOrderID] = struct{}{}
+}
+
+// PurchaseOrderIDCleared returns if the "purchase_order_id" field was cleared in this mutation.
+func (m *RedeemCodeMutation) PurchaseOrderIDCleared() bool {
+	_, ok := m.clearedFields[redeemcode.FieldPurchaseOrderID]
+	return ok
+}
+
+// ResetPurchaseOrderID resets all changes to the "purchase_order_id" field.
+func (m *RedeemCodeMutation) ResetPurchaseOrderID() {
+	m.purchase_order_id = nil
+	m.addpurchase_order_id = nil
+	delete(m.clearedFields, redeemcode.FieldPurchaseOrderID)
+}
+
+// SetPurchaseAmount sets the "purchase_amount" field.
+func (m *RedeemCodeMutation) SetPurchaseAmount(f float64) {
+	m.purchase_amount = &f
+	m.addpurchase_amount = nil
+}
+
+// PurchaseAmount returns the value of the "purchase_amount" field in the mutation.
+func (m *RedeemCodeMutation) PurchaseAmount() (r float64, exists bool) {
+	v := m.purchase_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPurchaseAmount returns the old "purchase_amount" field's value of the RedeemCode entity.
+// If the RedeemCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedeemCodeMutation) OldPurchaseAmount(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPurchaseAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPurchaseAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPurchaseAmount: %w", err)
+	}
+	return oldValue.PurchaseAmount, nil
+}
+
+// AddPurchaseAmount adds f to the "purchase_amount" field.
+func (m *RedeemCodeMutation) AddPurchaseAmount(f float64) {
+	if m.addpurchase_amount != nil {
+		*m.addpurchase_amount += f
+	} else {
+		m.addpurchase_amount = &f
+	}
+}
+
+// AddedPurchaseAmount returns the value that was added to the "purchase_amount" field in this mutation.
+func (m *RedeemCodeMutation) AddedPurchaseAmount() (r float64, exists bool) {
+	v := m.addpurchase_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPurchaseAmount resets all changes to the "purchase_amount" field.
+func (m *RedeemCodeMutation) ResetPurchaseAmount() {
+	m.purchase_amount = nil
+	m.addpurchase_amount = nil
+}
+
+// SetPurchasePayAmount sets the "purchase_pay_amount" field.
+func (m *RedeemCodeMutation) SetPurchasePayAmount(f float64) {
+	m.purchase_pay_amount = &f
+	m.addpurchase_pay_amount = nil
+}
+
+// PurchasePayAmount returns the value of the "purchase_pay_amount" field in the mutation.
+func (m *RedeemCodeMutation) PurchasePayAmount() (r float64, exists bool) {
+	v := m.purchase_pay_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPurchasePayAmount returns the old "purchase_pay_amount" field's value of the RedeemCode entity.
+// If the RedeemCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedeemCodeMutation) OldPurchasePayAmount(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPurchasePayAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPurchasePayAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPurchasePayAmount: %w", err)
+	}
+	return oldValue.PurchasePayAmount, nil
+}
+
+// AddPurchasePayAmount adds f to the "purchase_pay_amount" field.
+func (m *RedeemCodeMutation) AddPurchasePayAmount(f float64) {
+	if m.addpurchase_pay_amount != nil {
+		*m.addpurchase_pay_amount += f
+	} else {
+		m.addpurchase_pay_amount = &f
+	}
+}
+
+// AddedPurchasePayAmount returns the value that was added to the "purchase_pay_amount" field in this mutation.
+func (m *RedeemCodeMutation) AddedPurchasePayAmount() (r float64, exists bool) {
+	v := m.addpurchase_pay_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPurchasePayAmount resets all changes to the "purchase_pay_amount" field.
+func (m *RedeemCodeMutation) ResetPurchasePayAmount() {
+	m.purchase_pay_amount = nil
+	m.addpurchase_pay_amount = nil
+}
+
+// SetPurchaseCurrency sets the "purchase_currency" field.
+func (m *RedeemCodeMutation) SetPurchaseCurrency(s string) {
+	m.purchase_currency = &s
+}
+
+// PurchaseCurrency returns the value of the "purchase_currency" field in the mutation.
+func (m *RedeemCodeMutation) PurchaseCurrency() (r string, exists bool) {
+	v := m.purchase_currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPurchaseCurrency returns the old "purchase_currency" field's value of the RedeemCode entity.
+// If the RedeemCode object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RedeemCodeMutation) OldPurchaseCurrency(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPurchaseCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPurchaseCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPurchaseCurrency: %w", err)
+	}
+	return oldValue.PurchaseCurrency, nil
+}
+
+// ClearPurchaseCurrency clears the value of the "purchase_currency" field.
+func (m *RedeemCodeMutation) ClearPurchaseCurrency() {
+	m.purchase_currency = nil
+	m.clearedFields[redeemcode.FieldPurchaseCurrency] = struct{}{}
+}
+
+// PurchaseCurrencyCleared returns if the "purchase_currency" field was cleared in this mutation.
+func (m *RedeemCodeMutation) PurchaseCurrencyCleared() bool {
+	_, ok := m.clearedFields[redeemcode.FieldPurchaseCurrency]
+	return ok
+}
+
+// ResetPurchaseCurrency resets all changes to the "purchase_currency" field.
+func (m *RedeemCodeMutation) ResetPurchaseCurrency() {
+	m.purchase_currency = nil
+	delete(m.clearedFields, redeemcode.FieldPurchaseCurrency)
+}
+
 // SetNotes sets the "notes" field.
 func (m *RedeemCodeMutation) SetNotes(s string) {
 	m.notes = &s
@@ -29265,7 +29575,7 @@ func (m *RedeemCodeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RedeemCodeMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 15)
 	if m.code != nil {
 		fields = append(fields, redeemcode.FieldCode)
 	}
@@ -29283,6 +29593,21 @@ func (m *RedeemCodeMutation) Fields() []string {
 	}
 	if m.used_at != nil {
 		fields = append(fields, redeemcode.FieldUsedAt)
+	}
+	if m.purchased_by != nil {
+		fields = append(fields, redeemcode.FieldPurchasedBy)
+	}
+	if m.purchase_order_id != nil {
+		fields = append(fields, redeemcode.FieldPurchaseOrderID)
+	}
+	if m.purchase_amount != nil {
+		fields = append(fields, redeemcode.FieldPurchaseAmount)
+	}
+	if m.purchase_pay_amount != nil {
+		fields = append(fields, redeemcode.FieldPurchasePayAmount)
+	}
+	if m.purchase_currency != nil {
+		fields = append(fields, redeemcode.FieldPurchaseCurrency)
 	}
 	if m.notes != nil {
 		fields = append(fields, redeemcode.FieldNotes)
@@ -29316,6 +29641,16 @@ func (m *RedeemCodeMutation) Field(name string) (ent.Value, bool) {
 		return m.UsedBy()
 	case redeemcode.FieldUsedAt:
 		return m.UsedAt()
+	case redeemcode.FieldPurchasedBy:
+		return m.PurchasedBy()
+	case redeemcode.FieldPurchaseOrderID:
+		return m.PurchaseOrderID()
+	case redeemcode.FieldPurchaseAmount:
+		return m.PurchaseAmount()
+	case redeemcode.FieldPurchasePayAmount:
+		return m.PurchasePayAmount()
+	case redeemcode.FieldPurchaseCurrency:
+		return m.PurchaseCurrency()
 	case redeemcode.FieldNotes:
 		return m.Notes()
 	case redeemcode.FieldCreatedAt:
@@ -29345,6 +29680,16 @@ func (m *RedeemCodeMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUsedBy(ctx)
 	case redeemcode.FieldUsedAt:
 		return m.OldUsedAt(ctx)
+	case redeemcode.FieldPurchasedBy:
+		return m.OldPurchasedBy(ctx)
+	case redeemcode.FieldPurchaseOrderID:
+		return m.OldPurchaseOrderID(ctx)
+	case redeemcode.FieldPurchaseAmount:
+		return m.OldPurchaseAmount(ctx)
+	case redeemcode.FieldPurchasePayAmount:
+		return m.OldPurchasePayAmount(ctx)
+	case redeemcode.FieldPurchaseCurrency:
+		return m.OldPurchaseCurrency(ctx)
 	case redeemcode.FieldNotes:
 		return m.OldNotes(ctx)
 	case redeemcode.FieldCreatedAt:
@@ -29404,6 +29749,41 @@ func (m *RedeemCodeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUsedAt(v)
 		return nil
+	case redeemcode.FieldPurchasedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPurchasedBy(v)
+		return nil
+	case redeemcode.FieldPurchaseOrderID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPurchaseOrderID(v)
+		return nil
+	case redeemcode.FieldPurchaseAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPurchaseAmount(v)
+		return nil
+	case redeemcode.FieldPurchasePayAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPurchasePayAmount(v)
+		return nil
+	case redeemcode.FieldPurchaseCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPurchaseCurrency(v)
+		return nil
 	case redeemcode.FieldNotes:
 		v, ok := value.(string)
 		if !ok {
@@ -29443,6 +29823,18 @@ func (m *RedeemCodeMutation) AddedFields() []string {
 	if m.addvalue != nil {
 		fields = append(fields, redeemcode.FieldValue)
 	}
+	if m.addpurchased_by != nil {
+		fields = append(fields, redeemcode.FieldPurchasedBy)
+	}
+	if m.addpurchase_order_id != nil {
+		fields = append(fields, redeemcode.FieldPurchaseOrderID)
+	}
+	if m.addpurchase_amount != nil {
+		fields = append(fields, redeemcode.FieldPurchaseAmount)
+	}
+	if m.addpurchase_pay_amount != nil {
+		fields = append(fields, redeemcode.FieldPurchasePayAmount)
+	}
 	if m.addvalidity_days != nil {
 		fields = append(fields, redeemcode.FieldValidityDays)
 	}
@@ -29456,6 +29848,14 @@ func (m *RedeemCodeMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case redeemcode.FieldValue:
 		return m.AddedValue()
+	case redeemcode.FieldPurchasedBy:
+		return m.AddedPurchasedBy()
+	case redeemcode.FieldPurchaseOrderID:
+		return m.AddedPurchaseOrderID()
+	case redeemcode.FieldPurchaseAmount:
+		return m.AddedPurchaseAmount()
+	case redeemcode.FieldPurchasePayAmount:
+		return m.AddedPurchasePayAmount()
 	case redeemcode.FieldValidityDays:
 		return m.AddedValidityDays()
 	}
@@ -29473,6 +29873,34 @@ func (m *RedeemCodeMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddValue(v)
+		return nil
+	case redeemcode.FieldPurchasedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPurchasedBy(v)
+		return nil
+	case redeemcode.FieldPurchaseOrderID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPurchaseOrderID(v)
+		return nil
+	case redeemcode.FieldPurchaseAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPurchaseAmount(v)
+		return nil
+	case redeemcode.FieldPurchasePayAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPurchasePayAmount(v)
 		return nil
 	case redeemcode.FieldValidityDays:
 		v, ok := value.(int)
@@ -29494,6 +29922,15 @@ func (m *RedeemCodeMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(redeemcode.FieldUsedAt) {
 		fields = append(fields, redeemcode.FieldUsedAt)
+	}
+	if m.FieldCleared(redeemcode.FieldPurchasedBy) {
+		fields = append(fields, redeemcode.FieldPurchasedBy)
+	}
+	if m.FieldCleared(redeemcode.FieldPurchaseOrderID) {
+		fields = append(fields, redeemcode.FieldPurchaseOrderID)
+	}
+	if m.FieldCleared(redeemcode.FieldPurchaseCurrency) {
+		fields = append(fields, redeemcode.FieldPurchaseCurrency)
 	}
 	if m.FieldCleared(redeemcode.FieldNotes) {
 		fields = append(fields, redeemcode.FieldNotes)
@@ -29520,6 +29957,15 @@ func (m *RedeemCodeMutation) ClearField(name string) error {
 		return nil
 	case redeemcode.FieldUsedAt:
 		m.ClearUsedAt()
+		return nil
+	case redeemcode.FieldPurchasedBy:
+		m.ClearPurchasedBy()
+		return nil
+	case redeemcode.FieldPurchaseOrderID:
+		m.ClearPurchaseOrderID()
+		return nil
+	case redeemcode.FieldPurchaseCurrency:
+		m.ClearPurchaseCurrency()
 		return nil
 	case redeemcode.FieldNotes:
 		m.ClearNotes()
@@ -29552,6 +29998,21 @@ func (m *RedeemCodeMutation) ResetField(name string) error {
 		return nil
 	case redeemcode.FieldUsedAt:
 		m.ResetUsedAt()
+		return nil
+	case redeemcode.FieldPurchasedBy:
+		m.ResetPurchasedBy()
+		return nil
+	case redeemcode.FieldPurchaseOrderID:
+		m.ResetPurchaseOrderID()
+		return nil
+	case redeemcode.FieldPurchaseAmount:
+		m.ResetPurchaseAmount()
+		return nil
+	case redeemcode.FieldPurchasePayAmount:
+		m.ResetPurchasePayAmount()
+		return nil
+	case redeemcode.FieldPurchaseCurrency:
+		m.ResetPurchaseCurrency()
 		return nil
 	case redeemcode.FieldNotes:
 		m.ResetNotes()

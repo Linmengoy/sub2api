@@ -26,6 +26,16 @@ const (
 	FieldUsedBy = "used_by"
 	// FieldUsedAt holds the string denoting the used_at field in the database.
 	FieldUsedAt = "used_at"
+	// FieldPurchasedBy holds the string denoting the purchased_by field in the database.
+	FieldPurchasedBy = "purchased_by"
+	// FieldPurchaseOrderID holds the string denoting the purchase_order_id field in the database.
+	FieldPurchaseOrderID = "purchase_order_id"
+	// FieldPurchaseAmount holds the string denoting the purchase_amount field in the database.
+	FieldPurchaseAmount = "purchase_amount"
+	// FieldPurchasePayAmount holds the string denoting the purchase_pay_amount field in the database.
+	FieldPurchasePayAmount = "purchase_pay_amount"
+	// FieldPurchaseCurrency holds the string denoting the purchase_currency field in the database.
+	FieldPurchaseCurrency = "purchase_currency"
 	// FieldNotes holds the string denoting the notes field in the database.
 	FieldNotes = "notes"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -65,6 +75,11 @@ var Columns = []string{
 	FieldStatus,
 	FieldUsedBy,
 	FieldUsedAt,
+	FieldPurchasedBy,
+	FieldPurchaseOrderID,
+	FieldPurchaseAmount,
+	FieldPurchasePayAmount,
+	FieldPurchaseCurrency,
 	FieldNotes,
 	FieldCreatedAt,
 	FieldGroupID,
@@ -94,6 +109,12 @@ var (
 	DefaultStatus string
 	// StatusValidator is a validator for the "status" field. It is called by the builders before save.
 	StatusValidator func(string) error
+	// DefaultPurchaseAmount holds the default value on creation for the "purchase_amount" field.
+	DefaultPurchaseAmount float64
+	// DefaultPurchasePayAmount holds the default value on creation for the "purchase_pay_amount" field.
+	DefaultPurchasePayAmount float64
+	// PurchaseCurrencyValidator is a validator for the "purchase_currency" field. It is called by the builders before save.
+	PurchaseCurrencyValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultValidityDays holds the default value on creation for the "validity_days" field.
@@ -136,6 +157,31 @@ func ByUsedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByUsedAt orders the results by the used_at field.
 func ByUsedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUsedAt, opts...).ToFunc()
+}
+
+// ByPurchasedBy orders the results by the purchased_by field.
+func ByPurchasedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPurchasedBy, opts...).ToFunc()
+}
+
+// ByPurchaseOrderID orders the results by the purchase_order_id field.
+func ByPurchaseOrderID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPurchaseOrderID, opts...).ToFunc()
+}
+
+// ByPurchaseAmount orders the results by the purchase_amount field.
+func ByPurchaseAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPurchaseAmount, opts...).ToFunc()
+}
+
+// ByPurchasePayAmount orders the results by the purchase_pay_amount field.
+func ByPurchasePayAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPurchasePayAmount, opts...).ToFunc()
+}
+
+// ByPurchaseCurrency orders the results by the purchase_currency field.
+func ByPurchaseCurrency(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPurchaseCurrency, opts...).ToFunc()
 }
 
 // ByNotes orders the results by the notes field.

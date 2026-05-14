@@ -32,6 +32,7 @@ func (s *PaymentService) HandlePaymentNotification(ctx context.Context, n *payme
 	if n.Status != payment.NotificationStatusSuccess {
 		return nil
 	}
+	// 查询订单
 	// Look up order by out_trade_no (the external order ID we sent to the provider)
 	order, err := s.entClient.PaymentOrder.Query().Where(paymentorder.OutTradeNo(n.OrderID)).Only(ctx)
 	if err != nil {
@@ -45,6 +46,7 @@ func (s *PaymentService) HandlePaymentNotification(ctx context.Context, n *payme
 		}
 		return fmt.Errorf("lookup order failed for out_trade_no %s: %w", n.OrderID, err)
 	}
+	// 确认订单
 	return s.confirmPayment(ctx, order.ID, n.TradeNo, n.Amount, pk, n.Metadata)
 }
 
@@ -67,6 +69,7 @@ func parseLegacyPaymentOrderID(orderID string, lookupErr error) (int64, bool) {
 	return oid, true
 }
 
+// 多重校验支付回调的安全性
 func (s *PaymentService) confirmPayment(ctx context.Context, oid int64, tradeNo string, paid float64, pk string, metadata map[string]string) error {
 	o, err := s.entClient.PaymentOrder.Get(ctx, oid)
 	if err != nil {
@@ -105,6 +108,7 @@ func (s *PaymentService) confirmPayment(ctx context.Context, oid int64, tradeNo 
 		s.writeAuditLog(ctx, o.ID, "PAYMENT_AMOUNT_MISMATCH", pk, map[string]any{"expected": o.PayAmount, "paid": paid, "tradeNo": tradeNo})
 		return fmt.Errorf("amount mismatch: expected %s, got %s", strconv.FormatFloat(o.PayAmount, 'f', -1, 64), strconv.FormatFloat(paid, 'f', -1, 64))
 	}
+	//完成支付
 	return s.toPaid(ctx, o, tradeNo, paid, pk)
 }
 
@@ -139,10 +143,12 @@ func expectedNotificationProviderKey(registry *payment.Registry, orderPaymentTyp
 	return strings.TrimSpace(orderPaymentType)
 }
 
+// 前面校验完了，这里确定支付完成
 func (s *PaymentService) toPaid(ctx context.Context, o *dbent.PaymentOrder, tradeNo string, paid float64, pk string) error {
 	previousStatus := o.Status
 	now := time.Now()
 	grace := now.Add(-paymentGraceMinutes * time.Minute)
+	// 更新订单
 	c, err := s.entClient.PaymentOrder.Update().Where(
 		paymentorder.IDEQ(o.ID),
 		paymentorder.Or(
@@ -157,9 +163,11 @@ func (s *PaymentService) toPaid(ctx context.Context, o *dbent.PaymentOrder, trad
 	if err != nil {
 		return fmt.Errorf("update to PAID: %w", err)
 	}
+	// 保存失败再来一次
 	if c == 0 {
 		return s.alreadyProcessed(ctx, o)
 	}
+
 	if previousStatus == OrderStatusCancelled || previousStatus == OrderStatusExpired {
 		slog.Info("order recovered from webhook payment success",
 			"orderID", o.ID,
@@ -175,6 +183,7 @@ func (s *PaymentService) toPaid(ctx context.Context, o *dbent.PaymentOrder, trad
 		})
 	}
 	s.writeAuditLog(ctx, o.ID, "ORDER_PAID", pk, map[string]any{"tradeNo": tradeNo, "paidAmount": paid})
+	// 处理
 	return s.executeFulfillment(ctx, o.ID)
 }
 
@@ -207,13 +216,22 @@ func (s *PaymentService) alreadyProcessed(ctx context.Context, o *dbent.PaymentO
 	}
 }
 
+// 支付成功后的履约
 func (s *PaymentService) executeFulfillment(ctx context.Context, oid int64) error {
 	o, err := s.entClient.PaymentOrder.Get(ctx, oid)
 	if err != nil {
 		return fmt.Errorf("get order: %w", err)
 	}
+	// 订阅直接续费
 	if o.OrderType == payment.OrderTypeSubscription {
 		return s.ExecuteSubscriptionFulfillment(ctx, oid)
+	}
+	// 分销兑换码生成
+	if o.OrderType == payment.OrderTypePackageRedeem {
+		return s.ExecutePackageRedeemFulfillment(ctx, oid)
+	}
+	if o.OrderType != payment.OrderTypeBalance {
+		return infraerrors.BadRequest("INVALID_ORDER_TYPE", "invalid order type")
 	}
 	return s.ExecuteBalanceFulfillment(ctx, oid)
 }
@@ -368,6 +386,70 @@ func (s *PaymentService) doSub(ctx context.Context, o *dbent.PaymentOrder) error
 	return s.markCompleted(ctx, o, "SUBSCRIPTION_SUCCESS")
 }
 
+// 分销兑换码
+func (s *PaymentService) ExecutePackageRedeemFulfillment(ctx context.Context, oid int64) error {
+	o, err := s.entClient.PaymentOrder.Get(ctx, oid)
+	if err != nil {
+		return infraerrors.NotFound("NOT_FOUND", "order not found")
+	}
+	if o.Status == OrderStatusCompleted {
+		return nil
+	}
+	if psIsRefundStatus(o.Status) {
+		return infraerrors.BadRequest("INVALID_STATUS", "refund-related order cannot fulfill")
+	}
+	if o.Status != OrderStatusPaid && o.Status != OrderStatusFailed {
+		return infraerrors.BadRequest("INVALID_STATUS", "order cannot fulfill in status "+o.Status)
+	}
+	if o.SubscriptionGroupID == nil || o.SubscriptionDays == nil || *o.SubscriptionDays <= 0 {
+		return infraerrors.BadRequest("INVALID_STATUS", "missing package redeem subscription info")
+	}
+	c, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(oid), paymentorder.StatusIn(OrderStatusPaid, OrderStatusFailed)).SetStatus(OrderStatusRecharging).Save(ctx)
+	if err != nil {
+		return fmt.Errorf("lock: %w", err)
+	}
+	if c == 0 {
+		return nil
+	}
+	// 实际兑换码
+	if err := s.doPackageRedeem(ctx, o); err != nil {
+		s.markFailed(ctx, oid, err)
+		return err
+	}
+	return nil
+}
+
+func (s *PaymentService) doPackageRedeem(ctx context.Context, o *dbent.PaymentOrder) error {
+	// 审计日志幂等性检查
+	if s.hasAuditLog(ctx, o.ID, "PACKAGE_REDEEM_CODE_SUCCESS") {
+		return s.markCompleted(ctx, o, "PACKAGE_REDEEM_CODE_SUCCESS")
+	}
+
+	existing, lookupErr := s.redeemService.GetByCode(ctx, o.RechargeCode)
+	if existing != nil && lookupErr == nil {
+		return s.markCompleted(ctx, o, "PACKAGE_REDEEM_CODE_SUCCESS")
+	}
+	if lookupErr != nil && !errors.Is(lookupErr, ErrRedeemCodeNotFound) {
+		return fmt.Errorf("lookup package redeem code: %w", lookupErr)
+	}
+	currency := PaymentOrderCurrency(o)
+	rc := &RedeemCode{
+		Code:              o.RechargeCode,
+		Type:              RedeemTypeSubscription,
+		Status:            StatusUnused,
+		GroupID:           o.SubscriptionGroupID,
+		ValidityDays:      *o.SubscriptionDays,
+		PurchasedBy:       &o.UserID,
+		PurchaseOrderID:   &o.ID,
+		PurchaseAmount:    o.Amount,
+		PurchasePayAmount: o.PayAmount,
+		PurchaseCurrency:  &currency,
+	}
+	if err := s.redeemService.CreateCode(ctx, rc); err != nil {
+		return fmt.Errorf("create package redeem code: %w", err)
+	}
+	return s.markCompleted(ctx, o, "PACKAGE_REDEEM_CODE_SUCCESS")
+}
 func (s *PaymentService) hasAuditLog(ctx context.Context, orderID int64, action string) bool {
 	oid := strconv.FormatInt(orderID, 10)
 	c, _ := s.entClient.PaymentAuditLog.Query().
