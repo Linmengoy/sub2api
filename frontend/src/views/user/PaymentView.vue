@@ -20,7 +20,6 @@
             :expires-at="paymentState.expiresAt"
             :payment-type="paymentState.paymentType"
             :pay-url="paymentState.payUrl"
-            :order-type="paymentState.orderType"
             :currency="paymentState.currency || selectedCurrency"
             @done="onPaymentDone"
             @success="onPaymentSuccess"

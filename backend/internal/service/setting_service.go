@@ -640,6 +640,7 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 		SettingKeyChannelMonitorDefaultIntervalSeconds,
 		SettingKeyAvailableChannelsEnabled,
 		SettingKeyAffiliateEnabled,
+		SettingKeyPackageRedeemSaleRebateEnabled,
 		SettingKeyRiskControlEnabled,
 	}
 
@@ -743,7 +744,8 @@ func (s *SettingService) GetPublicSettings(ctx context.Context) (*PublicSettings
 
 		AvailableChannelsEnabled: settings[SettingKeyAvailableChannelsEnabled] == "true",
 
-		AffiliateEnabled: settings[SettingKeyAffiliateEnabled] == "true",
+		AffiliateEnabled:               settings[SettingKeyAffiliateEnabled] == "true",
+		PackageRedeemSaleRebateEnabled: settings[SettingKeyPackageRedeemSaleRebateEnabled] == "true",
 
 		RiskControlEnabled: settings[SettingKeyRiskControlEnabled] == "true",
 	}, nil
@@ -949,6 +951,7 @@ type PublicSettingsInjectionPayload struct {
 	ChannelMonitorDefaultIntervalSeconds int  `json:"channel_monitor_default_interval_seconds"`
 	AvailableChannelsEnabled             bool `json:"available_channels_enabled"`
 	AffiliateEnabled                     bool `json:"affiliate_enabled"`
+	PackageRedeemSaleRebateEnabled       bool `json:"package_redeem_sale_rebate_enabled"`
 	RiskControlEnabled                   bool `json:"risk_control_enabled"`
 }
 
@@ -1010,6 +1013,7 @@ func (s *SettingService) GetPublicSettingsForInjection(ctx context.Context) (any
 		ChannelMonitorDefaultIntervalSeconds: settings.ChannelMonitorDefaultIntervalSeconds,
 		AvailableChannelsEnabled:             settings.AvailableChannelsEnabled,
 		AffiliateEnabled:                     settings.AffiliateEnabled,
+		PackageRedeemSaleRebateEnabled:       settings.PackageRedeemSaleRebateEnabled,
 		RiskControlEnabled:                   settings.RiskControlEnabled,
 	}, nil
 }

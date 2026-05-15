@@ -290,6 +290,8 @@ type PublicSettings struct {
 
 	AffiliateEnabled bool `json:"affiliate_enabled"`
 
+	PackageRedeemSaleRebateEnabled bool `json:"package_redeem_sale_rebate_enabled"`
+
 	RiskControlEnabled bool `json:"risk_control_enabled"`
 }
 

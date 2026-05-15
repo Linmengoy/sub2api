@@ -4827,7 +4827,7 @@
                     min="0"
                     max="100"
                     class="input pr-8"
-                    placeholder="20"
+                    :placeholder="String(form.affiliate_rebate_rate || 20)"
                   />
                   <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span>
                 </div>
@@ -5057,7 +5057,7 @@
                     min="0"
                     max="100"
                     class="input pr-8"
-                    placeholder="20"
+                    placeholder="30"
                   />
                   <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span>
                 </div>
@@ -6546,7 +6546,7 @@ const form = reactive<SettingsForm>({
   affiliate_rebate_duration_days: 0,
   affiliate_rebate_per_invitee_cap: 0,
   package_redeem_sale_rebate_enabled: false,
-  package_redeem_sale_rebate_default_rate_percent: 20,
+  package_redeem_sale_rebate_default_rate_percent: 30,
   package_redeem_sale_rebate_freeze_hours: 0,
   package_redeem_sale_rebate_per_redeemer_cap: 0,
   package_redeem_sale_rebate_per_order_cap: 0,

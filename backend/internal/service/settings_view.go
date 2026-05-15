@@ -267,6 +267,9 @@ type PublicSettings struct {
 	// Affiliate (邀请返利) feature toggle
 	AffiliateEnabled bool `json:"affiliate_enabled"`
 
+	// Package redeem sale rebate feature toggle
+	PackageRedeemSaleRebateEnabled bool `json:"package_redeem_sale_rebate_enabled"`
+
 	// 风控中心功能开关
 	RiskControlEnabled bool `json:"risk_control_enabled"`
 }

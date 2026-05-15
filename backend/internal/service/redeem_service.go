@@ -59,11 +59,35 @@ type RedeemCodeRepository interface {
 	List(ctx context.Context, params pagination.PaginationParams) ([]RedeemCode, *pagination.PaginationResult, error)
 	ListWithFilters(ctx context.Context, params pagination.PaginationParams, codeType, status, search string) ([]RedeemCode, *pagination.PaginationResult, error)
 	ListByUser(ctx context.Context, userID int64, limit int) ([]RedeemCode, error)
+	ListPurchasedByUser(ctx context.Context, userID int64, params pagination.PaginationParams, status string) ([]RedeemCode, *pagination.PaginationResult, error)
 	// ListByUserPaginated returns paginated balance/concurrency history for a specific user.
 	// codeType filter is optional - pass empty string to return all types.
 	ListByUserPaginated(ctx context.Context, userID int64, params pagination.PaginationParams, codeType string) ([]RedeemCode, *pagination.PaginationResult, error)
 	// SumPositiveBalanceByUser returns the total recharged amount (sum of positive balance values) for a user.
 	SumPositiveBalanceByUser(ctx context.Context, userID int64) (float64, error)
+}
+
+type UserPackageRedeemSummary struct {
+	DefaultRebateRatePercent float64 `json:"default_rebate_rate_percent"`
+	TotalCodes               int64   `json:"total_codes"`
+	UnusedCodes              int64   `json:"unused_codes"`
+	UsedCodes                int64   `json:"used_codes"`
+	TotalPurchasePayAmount   float64 `json:"total_purchase_pay_amount"`
+	TotalRebateAmount        float64 `json:"total_rebate_amount"`
+	AvailableQuota           float64 `json:"available_quota"`
+	FrozenQuota              float64 `json:"frozen_quota"`
+	HistoryQuota             float64 `json:"history_quota"`
+}
+
+type AdminPackageRedeemSummary struct {
+	TotalCodes             int64   `json:"total_codes"`
+	UnusedCodes            int64   `json:"unused_codes"`
+	UsedCodes              int64   `json:"used_codes"`
+	TotalPurchasePayAmount float64 `json:"total_purchase_pay_amount"`
+	TotalRebateAmount      float64 `json:"total_rebate_amount"`
+	AppliedRebateCount     int64   `json:"applied_rebate_count"`
+	PendingRebateCount     int64   `json:"pending_rebate_count"`
+	FailedRebateCount      int64   `json:"failed_rebate_count"`
 }
 
 type PackageRedeemSaleRebateProcessor interface {
@@ -152,8 +176,8 @@ func (s *RedeemService) GenerateCodes(ctx context.Context, req GenerateCodesRequ
 		return nil, errors.New("count must be greater than 0")
 	}
 
-	// 邀请码类型不需要数值，其他类型需要非零值（支持负数用于退款）
-	if req.Type != RedeemTypeInvitation && req.Value == 0 {
+	// 邀请码和订阅码不需要数值，余额/并发类型需要非零值（支持负数用于退款）
+	if req.Type != RedeemTypeInvitation && req.Type != RedeemTypeSubscription && req.Value == 0 {
 		return nil, errors.New("value must not be zero")
 	}
 
@@ -166,9 +190,9 @@ func (s *RedeemService) GenerateCodes(ctx context.Context, req GenerateCodesRequ
 		codeType = RedeemTypeBalance
 	}
 
-	// 邀请码类型的 value 设为 0
+	// 邀请码和订阅码的 value 设为 0
 	value := req.Value
-	if codeType == RedeemTypeInvitation {
+	if codeType == RedeemTypeInvitation || codeType == RedeemTypeSubscription {
 		value = 0
 	}
 
@@ -209,7 +233,7 @@ func (s *RedeemService) CreateCode(ctx context.Context, code *RedeemCode) error 
 	if code.Type == "" {
 		code.Type = RedeemTypeBalance
 	}
-	if code.Type != RedeemTypeInvitation && code.Value == 0 {
+	if code.Type != RedeemTypeInvitation && code.Type != RedeemTypeSubscription && code.Value == 0 {
 		return errors.New("value must not be zero")
 	}
 	if code.Status == "" {
@@ -410,10 +434,7 @@ func (s *RedeemService) Redeem(ctx context.Context, userID int64, code string) (
 	}
 	// 有购买人的订阅触发销售返利
 	if redeemCode.Type == RedeemTypeSubscription && redeemCode.PurchasedBy != nil && s.packageSaleRebate != nil {
-		if err := s.packageSaleRebate.RecordPending(ctx, redeemCode, userID); err != nil {
-			return nil, fmt.Errorf("record package redeem sale rebate: %w", err)
-		}
-		go s.processPackageRedeemSaleRebate(ctx, redeemCode, userID)
+		s.processPackageRedeemSaleRebate(ctx, redeemCode, userID)
 	}
 
 	return redeemCode, nil
@@ -560,6 +581,14 @@ func (s *RedeemService) GetUserHistory(ctx context.Context, userID int64, limit 
 		return nil, fmt.Errorf("get user redeem history: %w", err)
 	}
 	return codes, nil
+}
+
+func (s *RedeemService) ListPurchasedPackageCodes(ctx context.Context, userID int64, params pagination.PaginationParams, status string) ([]RedeemCode, *pagination.PaginationResult, error) {
+	codes, result, err := s.redeemRepo.ListPurchasedByUser(ctx, userID, params, status)
+	if err != nil {
+		return nil, nil, fmt.Errorf("list purchased package redeem codes: %w", err)
+	}
+	return codes, result, nil
 }
 
 // reduceOrCancelSubscription 缩短订阅天数，剩余天数 <= 0 时取消订阅

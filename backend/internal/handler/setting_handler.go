@@ -83,7 +83,8 @@ func (h *SettingHandler) GetPublicSettings(c *gin.Context) {
 
 		AvailableChannelsEnabled: settings.AvailableChannelsEnabled,
 
-		AffiliateEnabled: settings.AffiliateEnabled,
+		AffiliateEnabled:               settings.AffiliateEnabled,
+		PackageRedeemSaleRebateEnabled: settings.PackageRedeemSaleRebateEnabled,
 
 		RiskControlEnabled: settings.RiskControlEnabled,
 	})

@@ -211,7 +211,7 @@ func (s *PaymentService) createOrderInTx(ctx context.Context, req CreateOrderReq
 	if err != nil {
 		return nil, fmt.Errorf("create order: %w", err)
 	}
-	code := fmt.Sprintf("PAY-%d-%d", order.ID, time.Now().UnixNano()%100000)
+	code := fmt.Sprintf("PAY-%d-%d", 10000+order.ID, time.Now().UnixNano()%100000)
 	order, err = tx.PaymentOrder.UpdateOneID(order.ID).SetRechargeCode(code).Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("set recharge code: %w", err)

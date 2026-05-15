@@ -220,6 +220,18 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/package-redeem-affiliate',
+    name: 'PackageRedeemAffiliate',
+    component: () => import('@/views/user/PackageRedeemAffiliateView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: 'Package Redeem Affiliate',
+      titleKey: 'nav.packageRedeemAffiliate',
+      requiresPayment: true
+    }
+  },
+  {
     path: '/available-channels',
     name: 'UserAvailableChannels',
     component: () => import('@/views/user/AvailableChannelsView.vue'),
@@ -590,6 +602,18 @@ const routes: RouteRecordRaw[] = [
       title: 'Affiliate Transfer Records',
       titleKey: 'nav.affiliateTransferRecords',
       descriptionKey: 'admin.affiliates.transfersDescription'
+    }
+  },
+  {
+    path: '/admin/affiliates/package-redeem',
+    name: 'AdminPackageRedeemAffiliate',
+    component: () => import('@/views/admin/affiliates/AdminPackageRedeemAffiliateView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Package Redeem Affiliate',
+      titleKey: 'nav.packageRedeemAffiliateManage',
+      requiresPayment: true
     }
   },
 

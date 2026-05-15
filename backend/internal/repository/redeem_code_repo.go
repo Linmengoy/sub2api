@@ -111,6 +111,22 @@ func (r *redeemCodeRepository) List(ctx context.Context, params pagination.Pagin
 	return r.ListWithFilters(ctx, params, "", "", "")
 }
 
+func (r *redeemCodeRepository) ListPurchasedByUser(ctx context.Context, userID int64, params pagination.PaginationParams, status string) ([]service.RedeemCode, *pagination.PaginationResult, error) {
+	q := r.client.RedeemCode.Query().Where(redeemcode.PurchasedByEQ(userID), redeemcode.TypeEQ(service.RedeemTypeSubscription))
+	if status != "" {
+		q = q.Where(redeemcode.StatusEQ(status))
+	}
+	total, err := q.Count(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	codes, err := q.WithUser().WithGroup().Offset(params.Offset()).Limit(params.Limit()).Order(dbent.Desc(redeemcode.FieldID)).All(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	return redeemCodeEntitiesToService(codes), paginationResultFromTotal(int64(total), params), nil
+}
+
 func (r *redeemCodeRepository) ListWithFilters(ctx context.Context, params pagination.PaginationParams, codeType, status, search string) ([]service.RedeemCode, *pagination.PaginationResult, error) {
 	q := r.client.RedeemCode.Query()
 

@@ -54,6 +54,8 @@ type CreditPackageRedeemSaleRebateInput struct {
 type PackageRedeemSaleRebateRepository interface {
 	CreatePendingIfNotExists(ctx context.Context, input PackageRedeemSaleRebate) (*PackageRedeemSaleRebate, error)
 	CreateSkippedIfNotExists(ctx context.Context, input PackageRedeemSaleRebate, status, reason string) (*PackageRedeemSaleRebate, error)
+	GetUserSummary(ctx context.Context, userID int64) (*UserPackageRedeemSummary, error)
+	GetAdminSummary(ctx context.Context) (*AdminPackageRedeemSummary, error)
 	MarkApplied(ctx context.Context, id int64, rebateRate, rebateAmount float64, currency string) error
 	MarkSkipped(ctx context.Context, id int64, status, reason string, rebateRate, rebateAmount float64, currency string) error
 	MarkFailed(ctx context.Context, id int64, rebateRate, rebateAmount float64, currency string, err error) error

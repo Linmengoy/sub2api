@@ -232,6 +232,7 @@ export interface PublicSettings {
   channel_monitor_default_interval_seconds: number
   available_channels_enabled: boolean
   affiliate_enabled: boolean
+  package_redeem_sale_rebate_enabled: boolean
 }
 
 export interface AuthResponse {
@@ -1278,6 +1279,10 @@ export interface RedeemCode {
   updated_at?: string
   group_id?: number | null // 订阅类型专用
   validity_days?: number // 订阅类型专用
+  purchased_by?: number | null
+  purchase_amount?: number
+  purchase_pay_amount?: number
+  purchase_currency?: string | null
   user?: User
   group?: Group // 关联的分组
 }

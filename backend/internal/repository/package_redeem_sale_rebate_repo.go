@@ -28,6 +28,65 @@ func (r *packageRedeemSaleRebateRepository) CreateSkippedIfNotExists(ctx context
 	return r.createIfNotExists(ctx, input, status, reason)
 }
 
+func (r *packageRedeemSaleRebateRepository) GetUserSummary(ctx context.Context, userID int64) (*service.UserPackageRedeemSummary, error) {
+	client := clientFromContext(ctx, r.client)
+	rows, err := client.QueryContext(ctx, `
+SELECT
+    COUNT(rc.id)::bigint,
+    COUNT(rc.id) FILTER (WHERE rc.status = 'unused')::bigint,
+    COUNT(rc.id) FILTER (WHERE rc.status = 'used')::bigint,
+    COALESCE(SUM(rc.purchase_pay_amount), 0)::double precision,
+    COALESCE(SUM(pr.rebate_amount) FILTER (WHERE pr.status = 'applied'), 0)::double precision,
+    COALESCE(ua.aff_quota, 0)::double precision,
+    COALESCE(ua.aff_frozen_quota, 0)::double precision,
+    COALESCE(ua.aff_history_quota, 0)::double precision
+FROM users u
+LEFT JOIN redeem_codes rc ON rc.purchased_by = u.id AND rc.type = 'subscription'
+LEFT JOIN package_redeem_sale_rebates pr ON pr.redeem_code_id = rc.id
+LEFT JOIN user_affiliates ua ON ua.user_id = u.id
+WHERE u.id = $1
+GROUP BY ua.aff_quota, ua.aff_frozen_quota, ua.aff_history_quota`, userID)
+	if err != nil {
+		return nil, fmt.Errorf("query user package redeem summary: %w", err)
+	}
+	defer func() { _ = rows.Close() }()
+	summary := &service.UserPackageRedeemSummary{}
+	if rows.Next() {
+		if err := rows.Scan(&summary.TotalCodes, &summary.UnusedCodes, &summary.UsedCodes, &summary.TotalPurchasePayAmount, &summary.TotalRebateAmount, &summary.AvailableQuota, &summary.FrozenQuota, &summary.HistoryQuota); err != nil {
+			return nil, err
+		}
+	}
+	return summary, rows.Close()
+}
+
+func (r *packageRedeemSaleRebateRepository) GetAdminSummary(ctx context.Context) (*service.AdminPackageRedeemSummary, error) {
+	client := clientFromContext(ctx, r.client)
+	rows, err := client.QueryContext(ctx, `
+SELECT
+    COUNT(rc.id)::bigint,
+    COUNT(rc.id) FILTER (WHERE rc.status = 'unused')::bigint,
+    COUNT(rc.id) FILTER (WHERE rc.status = 'used')::bigint,
+    COALESCE(SUM(rc.purchase_pay_amount), 0)::double precision,
+    COALESCE(SUM(pr.rebate_amount) FILTER (WHERE pr.status = 'applied'), 0)::double precision,
+    COUNT(pr.id) FILTER (WHERE pr.status = 'applied')::bigint,
+    COUNT(pr.id) FILTER (WHERE pr.status = 'pending')::bigint,
+    COUNT(pr.id) FILTER (WHERE pr.status = 'failed')::bigint
+FROM redeem_codes rc
+LEFT JOIN package_redeem_sale_rebates pr ON pr.redeem_code_id = rc.id
+WHERE rc.type = 'subscription' AND rc.purchased_by IS NOT NULL`)
+	if err != nil {
+		return nil, fmt.Errorf("query admin package redeem summary: %w", err)
+	}
+	defer func() { _ = rows.Close() }()
+	summary := &service.AdminPackageRedeemSummary{}
+	if rows.Next() {
+		if err := rows.Scan(&summary.TotalCodes, &summary.UnusedCodes, &summary.UsedCodes, &summary.TotalPurchasePayAmount, &summary.TotalRebateAmount, &summary.AppliedRebateCount, &summary.PendingRebateCount, &summary.FailedRebateCount); err != nil {
+			return nil, err
+		}
+	}
+	return summary, rows.Close()
+}
+
 func (r *packageRedeemSaleRebateRepository) createIfNotExists(ctx context.Context, input service.PackageRedeemSaleRebate, status, reason string) (*service.PackageRedeemSaleRebate, error) {
 	client := clientFromContext(ctx, r.client)
 	rows, err := client.QueryContext(ctx, `
@@ -36,8 +95,8 @@ INSERT INTO package_redeem_sale_rebates (
     base_amount, rebate_rate, rebate_amount, currency, status, reason,
     applied_at, created_at, updated_at
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, NULLIF($8, ''), $9, NULLIF($10, ''),
-        CASE WHEN $9 = 'applied' THEN NOW() ELSE NULL END, NOW(), NOW())
+VALUES ($1, $2, $3, $4, $5, $6, $7, NULLIF($8, ''), $9::varchar, NULLIF($10, ''),
+        CASE WHEN $9::text = 'applied' THEN NOW() ELSE NULL END, NOW(), NOW())
 ON CONFLICT (redeem_code_id) DO UPDATE SET updated_at = package_redeem_sale_rebates.updated_at
 RETURNING id, redeem_code_id, purchase_order_id, purchaser_id, redeemer_id,
           base_amount::double precision, rebate_rate::double precision, rebate_amount::double precision,

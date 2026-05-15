@@ -628,6 +628,14 @@ func registerAffiliateRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
 		affiliates.GET("/rebates", h.Admin.Affiliate.ListRebateRecords)
 		affiliates.GET("/transfers", h.Admin.Affiliate.ListTransferRecords)
 
+		packageRedeem := affiliates.Group("/package-redeem")
+		{
+			packageRedeem.GET("/summary", h.Admin.PackageRedeemAffiliate.Summary)
+			packageRedeem.GET("/codes", h.Admin.PackageRedeemAffiliate.ListCodes)
+			packageRedeem.GET("/codes/:id", h.Admin.PackageRedeemAffiliate.GetCode)
+			packageRedeem.DELETE("/codes/:id", h.Admin.PackageRedeemAffiliate.DeleteCode)
+		}
+
 		users := affiliates.Group("/users")
 		{
 			users.GET("", h.Admin.Affiliate.ListUsers)

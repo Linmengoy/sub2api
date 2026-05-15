@@ -53,6 +53,12 @@ func RegisterUserRoutes(
 			}
 		}
 
+		packageRedeemAff := authenticated.Group("/package-redeem-affiliate")
+		{
+			packageRedeemAff.GET("/summary", h.PackageRedeemAff.Summary)
+			packageRedeemAff.GET("/codes", h.PackageRedeemAff.ListCodes)
+		}
+
 		// API Key管理
 		keys := authenticated.Group("/keys")
 		{

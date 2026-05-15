@@ -88,7 +88,7 @@
         :class="['w-full rounded-xl py-2.5 text-sm font-semibold transition-all active:scale-[0.98]', btnClass]"
         @click="emit('select', plan)"
       >
-        {{ isRenewal ? t('payment.renewNow') : t('payment.subscribeNow') }}
+        {{ actionLabel || (isRenewal ? t('payment.renewNow') : t('payment.subscribeNow')) }}
       </button>
     </div>
   </div>
@@ -110,7 +110,7 @@ import {
   platformLabel,
 } from '@/utils/platformColors'
 
-const props = defineProps<{ plan: SubscriptionPlan; activeSubscriptions?: UserSubscription[] }>()
+const props = defineProps<{ plan: SubscriptionPlan; activeSubscriptions?: UserSubscription[]; actionLabel?: string }>()
 const emit = defineEmits<{ select: [plan: SubscriptionPlan] }>()
 const { t } = useI18n()
 
