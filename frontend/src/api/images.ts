@@ -24,11 +24,93 @@ export interface ImageGenerationResponse {
   }>
 }
 
+export interface ImageEditRequest {
+  model?: string
+  image: File | string
+  mask?: File | string
+  prompt: string
+  n?: number
+  size?: '1024x1024' | '1792x1024' | '1024x1792' | '256x256' | '512x512'
+}
+
+export interface ImageVariationRequest {
+  model?: string
+  image: File | string
+  n?: number
+  size?: '1024x1024' | '1792x1024' | '1024x1792' | '256x256' | '512x512'
+}
+
 export const imagesAPI = {
   async generate(params: ImageGenerationRequest): Promise<ImageGenerationResponse> {
     const response = await apiClient.post<ImageGenerationResponse>(
       '/images/generations',
       params
+    )
+    return response.data
+  },
+
+  async edit(params: ImageEditRequest): Promise<ImageGenerationResponse> {
+    const formData = new FormData()
+    
+    if (typeof params.image === 'string') {
+      // 如果是 base64 字符串，需要转为 Blob
+      const base64Data = params.image.split(',')[1] || params.image
+      const blob = await fetch(`data:image/png;base64,${base64Data}`).then(r => r.blob())
+      formData.append('image', blob, 'image.png')
+    } else {
+      formData.append('image', params.image)
+    }
+    
+    if (params.mask) {
+      if (typeof params.mask === 'string') {
+        const base64Data = params.mask.split(',')[1] || params.mask
+        const blob = await fetch(`data:image/png;base64,${base64Data}`).then(r => r.blob())
+        formData.append('mask', blob, 'mask.png')
+      } else {
+        formData.append('mask', params.mask)
+      }
+    }
+    
+    formData.append('prompt', params.prompt)
+    if (params.model) formData.append('model', params.model)
+    if (params.n) formData.append('n', params.n.toString())
+    if (params.size) formData.append('size', params.size)
+    
+    const response = await apiClient.post<ImageGenerationResponse>(
+      '/images/edits',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+    return response.data
+  },
+
+  async createVariation(params: ImageVariationRequest): Promise<ImageGenerationResponse> {
+    const formData = new FormData()
+    
+    if (typeof params.image === 'string') {
+      const base64Data = params.image.split(',')[1] || params.image
+      const blob = await fetch(`data:image/png;base64,${base64Data}`).then(r => r.blob())
+      formData.append('image', blob, 'image.png')
+    } else {
+      formData.append('image', params.image)
+    }
+    
+    if (params.model) formData.append('model', params.model)
+    if (params.n) formData.append('n', params.n.toString())
+    if (params.size) formData.append('size', params.size)
+    
+    const response = await apiClient.post<ImageGenerationResponse>(
+      '/images/variations',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
     )
     return response.data
   },

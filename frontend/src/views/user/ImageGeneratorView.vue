@@ -2,7 +2,12 @@
   <div class="image-generator">
     <div class="generator-container">
       <div class="generator-header">
-        <h1 class="page-title">🎨 {{ $t('image.title') }}</h1>
+        <div class="header-top">
+          <h1 class="page-title">🎨 {{ $t('image.title') }}</h1>
+          <router-link to="/edit" class="nav-button">
+            <span>🖌️</span> {{ $t('image.navEdit') }}
+          </router-link>
+        </div>
         <p class="page-description">{{ $t('image.description') }}</p>
       </div>
 
@@ -267,11 +272,39 @@ function handleRegenerate() {
   margin-bottom: 2rem;
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 .page-title {
   font-size: 2.5rem;
   font-weight: 700;
   color: #0f766e;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
+}
+
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+}
+
+.nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(99, 102, 241, 0.3);
 }
 
 .page-description {
