@@ -6923,6 +6923,20 @@ export default {
     varySubtle: 'Subtle Variation',
     editFailed: 'Image edit failed, please try again',
     varyFailed: 'Failed to generate variations, please try again',
+    // Image Generation
+    aspectRatio: 'Aspect Ratio',
+    version: 'Version',
+    fast: 'Fast',
+    detailed: 'Detailed',
+    enhance: 'Enhance',
+    clear: 'Clear',
+    random: 'Random',
+    imagine: 'Imagine',
+    quickPrompts: 'Quick Prompts',
+    enterPromptHint: 'Enter a prompt to start creating',
+    recentJobs: 'Recent Jobs',
+    clearAll: 'Clear All',
+    useAsSource: 'Use as Source',
   },
 
 }

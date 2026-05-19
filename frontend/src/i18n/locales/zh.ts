@@ -6790,6 +6790,20 @@ export default {
     varySubtle: '微妙变体',
     editFailed: '图片编辑失败，请重试',
     varyFailed: '生成变体失败，请重试',
+    // Image Generation
+    aspectRatio: '宽高比',
+    version: '版本',
+    fast: '快速',
+    detailed: '详细',
+    enhance: '增强',
+    clear: '清除',
+    random: '随机',
+    imagine: 'Imagine',
+    quickPrompts: '快速提示词',
+    enterPromptHint: '输入提示词开始创作',
+    recentJobs: '最近作业',
+    clearAll: '清空',
+    useAsSource: '用作源图',
   },
 
   // Payment System
