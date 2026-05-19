@@ -580,8 +580,8 @@ onMounted(() => {
 /* 左侧导航 */
 .sidebar {
   width: 260px;
-  background: #0f0f0f;
-  border-right: 1px solid #2a2a2a;
+  background: #0f172a;
+  border-right: 1px solid #1e293b;
   display: flex;
   flex-direction: column;
 }
@@ -613,12 +613,12 @@ onMounted(() => {
 }
 
 .nav-item:hover {
-  background: #2a2a2a;
+  background: #1e293b;
   color: #fff;
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   color: #fff;
 }
 
@@ -646,7 +646,7 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 8px;
 }
 
@@ -681,8 +681,8 @@ onMounted(() => {
 
 .top-bar {
   height: 64px;
-  background: #0f0f0f;
-  border-bottom: 1px solid #2a2a2a;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -697,9 +697,9 @@ onMounted(() => {
 .tab {
   padding: 8px 20px;
   background: transparent;
-  border: 1px solid #2a2a2a;
+  border: 1px solid #334155;
   border-radius: 8px;
-  color: #a0a0a0;
+  color: #94a3b8;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.875rem;
@@ -707,13 +707,13 @@ onMounted(() => {
 }
 
 .tab:hover {
-  border-color: #4a4a4a;
+  border-color: #475569;
   color: #fff;
 }
 
 .tab.active {
-  background: #2a2a2a;
-  border-color: #2a2a2a;
+  background: #334155;
+  border-color: #334155;
   color: #fff;
 }
 
@@ -735,7 +735,7 @@ onMounted(() => {
 }
 
 .icon-btn:hover {
-  background: #2a2a2a;
+  background: #1e293b;
   color: #fff;
 }
 
@@ -757,7 +757,7 @@ onMounted(() => {
   width: 100%;
   max-width: 600px;
   height: 400px;
-  border: 2px dashed #4a4a4a;
+  border: 2px dashed #475569;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -765,13 +765,13 @@ onMounted(() => {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  background: #1a1a1a;
+  background: #1e293b;
 }
 
 .upload-zone:hover,
 .upload-zone.dragging {
-  border-color: #6366f1;
-  background: #1a1a2e;
+  border-color: #14b8a6;
+  background: #0f172a;
 }
 
 .upload-icon {
@@ -801,7 +801,7 @@ onMounted(() => {
 }
 
 .canvas-container {
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -837,7 +837,7 @@ onMounted(() => {
 
 /* 工具面板 */
 .tools-panel {
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -847,7 +847,7 @@ onMounted(() => {
 
 .tool-section {
   padding-bottom: 20px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid #334155;
 }
 
 .tool-section:last-of-type {
@@ -872,22 +872,22 @@ onMounted(() => {
 
 .tool-btn {
   padding: 10px 16px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #334155;
+  border: 1px solid #475569;
   border-radius: 8px;
-  color: #a0a0a0;
+  color: #94a3b8;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.875rem;
 }
 
 .tool-btn:hover {
-  background: #3a3a3a;
+  background: #475569;
   color: #fff;
 }
 
 .tool-btn.active {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border-color: transparent;
   color: #fff;
 }
@@ -946,8 +946,8 @@ onMounted(() => {
 .param-item select {
   width: 100%;
   padding: 10px 12px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #334155;
+  border: 1px solid #475569;
   border-radius: 8px;
   color: #fff;
   font-size: 0.875rem;
@@ -956,7 +956,7 @@ onMounted(() => {
 
 .param-item select:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #14b8a6;
 }
 
 .prompt-section {
@@ -966,8 +966,8 @@ onMounted(() => {
 .prompt-section textarea {
   width: 100%;
   padding: 12px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #334155;
+  border: 1px solid #475569;
   border-radius: 8px;
   color: #fff;
   font-size: 0.875rem;
@@ -976,13 +976,13 @@ onMounted(() => {
 
 .prompt-section textarea:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #14b8a6;
 }
 
 .generate-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -998,7 +998,7 @@ onMounted(() => {
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
 }
 
 .generate-btn:disabled {
@@ -1027,22 +1027,22 @@ onMounted(() => {
 
 .change-btn {
   padding: 8px 16px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #334155;
+  border: 1px solid #475569;
   border-radius: 6px;
-  color: #a0a0a0;
+  color: #94a3b8;
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s;
 }
 
 .change-btn:hover {
-  background: #3a3a3a;
+  background: #475569;
   color: #fff;
 }
 
 .vary-tools {
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 12px;
   padding: 24px;
 }
@@ -1056,8 +1056,8 @@ onMounted(() => {
 
 .vary-btn {
   padding: 16px 24px;
-  background: #2a2a2a;
-  border: 2px solid #3a3a3a;
+  background: #334155;
+  border: 2px solid #475569;
   border-radius: 10px;
   color: #fff;
   cursor: pointer;
@@ -1067,18 +1067,18 @@ onMounted(() => {
 }
 
 .vary-btn:hover:not(:disabled) {
-  background: #3a3a3a;
-  border-color: #4a4a4a;
+  background: #475569;
+  border-color: #64748b;
   transform: translateY(-2px);
 }
 
 .vary-btn.primary {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border-color: transparent;
 }
 
 .vary-btn.primary:hover:not(:disabled) {
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
 }
 
 .vary-btn:disabled {
@@ -1119,7 +1119,7 @@ onMounted(() => {
 }
 
 .result-card {
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.2s;
@@ -1145,17 +1145,17 @@ onMounted(() => {
 .action-btn {
   flex: 1;
   padding: 8px;
-  background: #2a2a2a;
+  background: #334155;
   border: none;
   border-radius: 6px;
-  color: #a0a0a0;
+  color: #94a3b8;
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s;
 }
 
 .action-btn:hover {
-  background: #3a3a3a;
+  background: #475569;
   color: #fff;
 }
 

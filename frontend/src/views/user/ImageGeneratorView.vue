@@ -450,8 +450,8 @@ const clearHistory = () => {
 /* 侧边栏 */
 .sidebar {
   width: 260px;
-  background: #0f0f0f;
-  border-right: 1px solid #2a2a2a;
+  background: #0f172a;
+  border-right: 1px solid #1e293b;
   display: flex;
   flex-direction: column;
 }
@@ -483,12 +483,12 @@ const clearHistory = () => {
 }
 
 .nav-item:hover {
-  background: #2a2a2a;
+  background: #1e293b;
   color: #fff;
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   color: #fff;
 }
 
@@ -516,7 +516,7 @@ const clearHistory = () => {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 8px;
 }
 
@@ -551,8 +551,8 @@ const clearHistory = () => {
 
 .top-bar {
   height: 72px;
-  background: #0f0f0f;
-  border-bottom: 1px solid #2a2a2a;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -588,7 +588,7 @@ const clearHistory = () => {
 }
 
 .icon-btn:hover {
-  background: #2a2a2a;
+  background: #1e293b;
   color: #fff;
 }
 
@@ -608,7 +608,7 @@ const clearHistory = () => {
 
 /* 预览区 */
 .preview-area {
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 12px;
   padding: 24px;
   display: flex;
@@ -619,7 +619,7 @@ const clearHistory = () => {
 .loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(26, 26, 26, 0.95);
+  background: rgba(30, 41, 59, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -648,7 +648,7 @@ const clearHistory = () => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(90deg, #14b8a6, #0d9488);
   transition: width 0.3s ease;
 }
 
@@ -710,8 +710,8 @@ const clearHistory = () => {
 
 .image-actions-overlay .action-btn {
   padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid #3a3a3a;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid #475569;
   border-radius: 6px;
   color: #fff;
   cursor: pointer;
@@ -721,7 +721,7 @@ const clearHistory = () => {
 }
 
 .image-actions-overlay .action-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border-color: transparent;
 }
 
@@ -745,7 +745,7 @@ const clearHistory = () => {
 .history-section {
   margin-top: auto;
   padding-top: 24px;
-  border-top: 1px solid #2a2a2a;
+  border-top: 1px solid #334155;
 }
 
 .history-header {
@@ -818,7 +818,7 @@ const clearHistory = () => {
 
 .use-btn {
   padding: 6px 12px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -828,7 +828,7 @@ const clearHistory = () => {
 
 /* 控制面板 */
 .control-panel {
-  background: #1a1a1a;
+  background: #1e293b;
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -838,7 +838,7 @@ const clearHistory = () => {
 }
 
 .prompt-section {
-  background: #0f0f0f;
+  background: #0f172a;
   border-radius: 8px;
   padding: 16px;
 }
@@ -858,7 +858,7 @@ const clearHistory = () => {
 
 .enhance-btn {
   padding: 4px 12px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -869,14 +869,14 @@ const clearHistory = () => {
 
 .enhance-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 8px rgba(20, 184, 166, 0.3);
 }
 
 .prompt-input {
   width: 100%;
   padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 6px;
   color: #fff;
   font-size: 0.875rem;
@@ -886,7 +886,7 @@ const clearHistory = () => {
 
 .prompt-input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #14b8a6;
 }
 
 .prompt-actions {
@@ -897,17 +897,17 @@ const clearHistory = () => {
 .prompt-actions .action-btn {
   flex: 1;
   padding: 6px 12px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #334155;
+  border: 1px solid #475569;
   border-radius: 4px;
-  color: #a0a0a0;
+  color: #94a3b8;
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .prompt-actions .action-btn:hover {
-  background: #3a3a3a;
+  background: #475569;
   color: #fff;
 }
 
@@ -919,7 +919,7 @@ const clearHistory = () => {
 }
 
 .param-section {
-  background: #0f0f0f;
+  background: #0f172a;
   border-radius: 8px;
   padding: 16px;
 }
@@ -947,22 +947,22 @@ const clearHistory = () => {
   align-items: center;
   gap: 4px;
   padding: 12px 8px;
-  background: #1a1a1a;
-  border: 2px solid #2a2a2a;
+  background: #1e293b;
+  border: 2px solid #334155;
   border-radius: 8px;
-  color: #a0a0a0;
+  color: #94a3b8;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .model-btn:hover {
-  border-color: #3a3a3a;
+  border-color: #475569;
   color: #fff;
 }
 
 .model-btn.active {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
   color: #fff;
 }
 
@@ -988,22 +988,22 @@ const clearHistory = () => {
   align-items: center;
   gap: 6px;
   padding: 10px 4px;
-  background: #1a1a1a;
-  border: 2px solid #2a2a2a;
+  background: #1e293b;
+  border: 2px solid #334155;
   border-radius: 6px;
-  color: #a0a0a0;
+  color: #94a3b8;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .aspect-btn:hover {
-  border-color: #3a3a3a;
+  border-color: #475569;
   color: #fff;
 }
 
 .aspect-btn.active {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
   color: #fff;
 }
 
@@ -1021,8 +1021,8 @@ const clearHistory = () => {
 .version-select {
   width: 100%;
   padding: 10px 12px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 6px;
   color: #fff;
   font-size: 0.875rem;
@@ -1031,7 +1031,7 @@ const clearHistory = () => {
 
 .version-select:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #14b8a6;
 }
 
 /* 质量选择 */
@@ -1043,10 +1043,10 @@ const clearHistory = () => {
 
 .quality-btn {
   padding: 10px 12px;
-  background: #1a1a1a;
-  border: 2px solid #2a2a2a;
+  background: #1e293b;
+  border: 2px solid #334155;
   border-radius: 6px;
-  color: #a0a0a0;
+  color: #94a3b8;
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
@@ -1054,13 +1054,13 @@ const clearHistory = () => {
 }
 
 .quality-btn:hover {
-  border-color: #3a3a3a;
+  border-color: #475569;
   color: #fff;
 }
 
 .quality-btn.active {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
   color: #fff;
 }
 
@@ -1073,23 +1073,23 @@ const clearHistory = () => {
 
 .style-btn {
   padding: 10px 12px;
-  background: #1a1a1a;
-  border: 2px solid #2a2a2a;
+  background: #1e293b;
+  border: 2px solid #334155;
   border-radius: 6px;
-  color: #a0a0a0;
+  color: #94a3b8;
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .style-btn:hover {
-  border-color: #3a3a3a;
+  border-color: #475569;
   color: #fff;
 }
 
 .style-btn.active {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
   color: #fff;
 }
 
@@ -1102,10 +1102,10 @@ const clearHistory = () => {
 
 .num-btn {
   padding: 10px 12px;
-  background: #1a1a1a;
-  border: 2px solid #2a2a2a;
+  background: #1e293b;
+  border: 2px solid #334155;
   border-radius: 6px;
-  color: #a0a0a0;
+  color: #94a3b8;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -1113,13 +1113,13 @@ const clearHistory = () => {
 }
 
 .num-btn:hover {
-  border-color: #3a3a3a;
+  border-color: #475569;
   color: #fff;
 }
 
 .num-btn.active {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.1);
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
   color: #fff;
 }
 
@@ -1127,7 +1127,7 @@ const clearHistory = () => {
 .generate-btn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -1145,7 +1145,7 @@ const clearHistory = () => {
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.4);
 }
 
 .generate-btn:disabled {
@@ -1155,7 +1155,7 @@ const clearHistory = () => {
 
 /* 快捷提示词 */
 .quick-prompts {
-  background: #0f0f0f;
+  background: #0f172a;
   border-radius: 8px;
   padding: 16px;
 }
@@ -1177,18 +1177,18 @@ const clearHistory = () => {
 
 .quick-tag {
   padding: 6px 12px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 16px;
-  color: #a0a0a0;
+  color: #94a3b8;
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .quick-tag:hover {
-  background: #2a2a2a;
-  border-color: #3a3a3a;
+  background: #334155;
+  border-color: #475569;
   color: #fff;
 }
 
