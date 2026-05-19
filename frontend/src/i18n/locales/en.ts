@@ -6864,4 +6864,38 @@ export default {
     },
   },
 
+  // Image Generation
+  image: {
+    title: 'AI Image Generation',
+    description: 'Generate stunning images using advanced AI models based on text descriptions',
+    prompt: 'Prompt',
+    enterPrompt: 'Enter your image description, e.g.: A cute cat playing on the grass',
+    model: 'Select Model',
+    size: 'Image Size',
+    quality: 'Image Quality',
+    style: 'Image Style',
+    number: 'Number of Images',
+    generate: 'Generate Image',
+    generating: 'Generating...',
+    pleaseWait: 'Please wait, calling AI model...',
+    download: 'Download',
+    share: 'Share',
+    regenerate: 'Regenerate',
+    placeholder: 'Generated image will appear here',
+    generatedImage: 'Generated Image',
+    revisedPrompt: 'Revised Prompt',
+    linkCopied: 'Link copied to clipboard',
+    generationFailed: 'Image generation failed, please try again',
+    templates: '💡 Quick Templates',
+    prices: {
+      dalle3: '$0.04/image',
+      dalle2: '$0.02/image',
+      gptImage: '$0.01/image'
+    },
+    qualityStandard: 'Standard',
+    qualityHD: 'HD',
+    styleVivid: 'Vivid',
+    styleNatural: 'Natural',
+  },
+
 }

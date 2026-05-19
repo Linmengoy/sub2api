@@ -6731,6 +6731,40 @@ export default {
     }
   },
 
+  // Image Generation
+  image: {
+    title: 'AI 图片生成',
+    description: '使用先进的 AI 模型，根据文字描述生成精美图片',
+    prompt: '提示词',
+    enterPrompt: '输入您的图片描述，例如：一只可爱的猫咪在草地上玩耍',
+    model: '选择模型',
+    size: '图片尺寸',
+    quality: '图片质量',
+    style: '图片风格',
+    number: '生成数量',
+    generate: '生成图片',
+    generating: '生成中...',
+    pleaseWait: '请稍候，正在调用 AI 模型...',
+    download: '下载',
+    share: '分享',
+    regenerate: '重新生成',
+    placeholder: '生成的图片将在这里显示',
+    generatedImage: '已生成的图片',
+    revisedPrompt: '优化后的提示词',
+    linkCopied: '链接已复制到剪贴板',
+    generationFailed: '图片生成失败，请重试',
+    templates: '💡 快速模板',
+    prices: {
+      dalle3: '$0.04/张',
+      dalle2: '$0.02/张',
+      gptImage: '$0.01/张'
+    },
+    qualityStandard: '标准',
+    qualityHD: '高清',
+    styleVivid: '生动',
+    styleNatural: '自然',
+  },
+
   // Payment System
   payment: {
     title: '充值/订阅',
