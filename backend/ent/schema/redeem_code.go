@@ -79,6 +79,10 @@ func (RedeemCode) Fields() []ent.Field {
 			Immutable().
 			Default(time.Now).
 			SchemaType(map[string]string{dialect.Postgres: "timestamptz"}),
+		field.Time("expires_at").
+			Optional().
+			Nillable().
+			SchemaType(map[string]string{dialect.Postgres: "timestamptz"}),
 		field.Int64("group_id").
 			Optional().
 			Nillable(),
