@@ -380,6 +380,7 @@ func redeemCodeEntityToService(m *dbent.RedeemCode) *service.RedeemCode {
 		PurchaseCurrency:  m.PurchaseCurrency,
 		Notes:             derefString(m.Notes),
 		CreatedAt:         m.CreatedAt,
+		ExpiresAt:         m.ExpiresAt,
 		GroupID:           m.GroupID,
 		ValidityDays:      m.ValidityDays,
 	}

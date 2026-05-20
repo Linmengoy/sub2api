@@ -21,6 +21,7 @@ type RedeemCode struct {
 	PurchaseCurrency  *string
 	Notes             string
 	CreatedAt         time.Time
+	ExpiresAt         *time.Time
 
 	GroupID      *int64
 	ValidityDays int

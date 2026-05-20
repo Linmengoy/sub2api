@@ -28611,6 +28611,7 @@ type RedeemCodeMutation struct {
 	purchase_currency      *string
 	notes                  *string
 	created_at             *time.Time
+	expires_at             *time.Time
 	validity_days          *int
 	addvalidity_days       *int
 	clearedFields          map[string]struct{}

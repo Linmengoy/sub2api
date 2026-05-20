@@ -576,11 +576,11 @@ func (s *OpenAIGatewayService) handleOpenAIImagesOAuthNonStreamingResponse(
 	results, createdAt, usageRaw, firstMeta, _, err := collectOpenAIImagesFromResponsesBody(body)
 	if err != nil {
 		logger.LegacyPrintf("service.openai_gateway", "[OpenAI] Images OAuth non-stream parse failed status=%d request_id=%s body=%s err=%v", resp.StatusCode, resp.Header.Get("x-request-id"), truncateForLog(body, 8192), err)
-		return OpenAIUsage{}, 0, err
+		return OpenAIUsage{}, 0, nil, err
 	}
 	if len(results) == 0 {
 		logger.LegacyPrintf("service.openai_gateway", "[OpenAI] Images OAuth non-stream missing image output status=%d request_id=%s found_final=%t usage=%+v body=%s", resp.StatusCode, resp.Header.Get("x-request-id"), strings.Contains(string(body), "response.completed"), usage, truncateForLog(body, 8192))
-		return OpenAIUsage{}, 0, fmt.Errorf("upstream did not return image output")
+		return OpenAIUsage{}, 0, nil, fmt.Errorf("upstream did not return image output")
 	}
 	if strings.TrimSpace(firstMeta.Model) == "" {
 		firstMeta.Model = strings.TrimSpace(fallbackModel)
@@ -989,6 +989,9 @@ func (s *OpenAIGatewayService) forwardOpenAIImagesOAuth(
 	}
 	upstreamReq.Header.Set("Content-Type", "application/json")
 	upstreamReq.Header.Set("Accept", "text/event-stream")
+	if !parsed.Stream {
+		upstreamReq.Header.Set("Prefer", "wait=600")
+	}
 
 	proxyURL := ""
 	if account.ProxyID != nil && account.Proxy != nil {

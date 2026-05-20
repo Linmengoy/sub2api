@@ -328,6 +328,24 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 					continue
 				}
 
+				if shouldFailoverOpenAIImagesForwardError(err) && c.Request.Context().Err() == nil {
+					h.gatewayService.RecordOpenAIAccountSwitch()
+					failedAccountIDs[account.ID] = struct{}{}
+					lastFailoverErr = &service.UpstreamFailoverError{StatusCode: http.StatusBadGateway}
+					if switchCount >= maxAccountSwitches {
+						h.handleFailoverExhausted(c, lastFailoverErr, streamStarted)
+						return
+					}
+					switchCount++
+					reqLog.Warn("openai.images.forward_error_failover_switching",
+						zap.Int64("account_id", account.ID),
+						zap.Int("switch_count", switchCount),
+						zap.Int("max_switches", maxAccountSwitches),
+						zap.Error(err),
+					)
+					continue
+				}
+
 				// 非故障转移错误，直接返回
 				h.gatewayService.ReportOpenAIAccountScheduleResult(account.ID, false, nil)
 				wroteFallback := h.ensureForwardErrorResponse(c, streamStarted)
@@ -404,6 +422,19 @@ func (h *OpenAIGatewayHandler) Images(c *gin.Context) {
 		)
 		return
 	}
+}
+
+func shouldFailoverOpenAIImagesForwardError(err error) bool {
+	if err == nil {
+		return false
+	}
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		return true
+	}
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "context canceled") ||
+		strings.Contains(msg, "context deadline exceeded") ||
+		strings.Contains(msg, "upstream request failed")
 }
 
 func isMultipartImagesContentType(contentType string) bool {
